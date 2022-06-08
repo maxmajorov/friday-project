@@ -5,7 +5,6 @@ import React, {
   useState,
 } from "react";
 import { SuperInput } from "../SuperInput/SuperInput";
-import CreateIcon from "@material-ui/icons/Create";
 import classes from "./SuperEditableSpan.module.css";
 
 // тип пропсов обычного инпута
@@ -30,7 +29,7 @@ type SuperEditableSpanType = DefaultInputPropsType & {
   spanProps?: DefaultSpanPropsType; // пропсы для спана
 };
 
-const SuperEditableSpan: React.FC<SuperEditableSpanType> = ({
+export const SuperEditableSpan: React.FC<SuperEditableSpanType> = ({
   autoFocus, // игнорировать изменение этого пропса
   onBlur,
   onEnter,
@@ -77,13 +76,11 @@ const SuperEditableSpan: React.FC<SuperEditableSpanType> = ({
             {...restSpanProps}
           >
             {/*если нет захардкодженного текста для спана, то значение инпута*/}
-            {children || restProps.value}
+            {/* {children || restProps.value} */}
+            change me!
           </span>
-          <CreateIcon />
         </>
       )}
     </>
   );
 };
-
-export default SuperEditableSpan;

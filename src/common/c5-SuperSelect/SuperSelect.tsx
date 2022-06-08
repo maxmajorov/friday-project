@@ -1,31 +1,10 @@
-import {
-  Button,
-  createStyles,
-  FormControl,
-  InputLabel,
-  makeStyles,
-  MenuItem,
-  Select,
-  Theme,
-} from "@material-ui/core";
 import React, {
   SelectHTMLAttributes,
   DetailedHTMLProps,
   ChangeEvent,
 } from "react";
-
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    button: {
-      display: "block",
-      marginTop: theme.spacing(2),
-    },
-    formControl: {
-      margin: theme.spacing(1),
-      minWidth: 120,
-    },
-  })
-);
+import SuperButton from "../c2-SuperButton/SuperButton";
+import classes from "./SuperSelect.module.css";
 
 type DefaultSelectPropsType = DetailedHTMLProps<
   SelectHTMLAttributes<HTMLSelectElement>,
@@ -43,16 +22,14 @@ export const SuperSelect: React.FC<SuperSelectPropsType> = ({
   onChangeOption,
   ...restProps
 }) => {
-  const classes = useStyles();
   const [open, setOpen] = React.useState(false);
-
-  const mappedOptions: any[] = options
-    ? options.map((el, ind) => (
-        <MenuItem key={ind} value={el}>
-          {el}
-        </MenuItem>
-      ))
-    : [""]; // map options with key
+  const selectOptions: any[] = [
+    "Select element",
+    "Apples",
+    "Bananas",
+    "Oranges",
+    "Grapes",
+  ];
 
   const onChangeHandler = (event: ChangeEvent<any>) => {
     onChange && onChange(event);
@@ -67,24 +44,23 @@ export const SuperSelect: React.FC<SuperSelectPropsType> = ({
     setOpen(true);
   };
 
+  const toogleHandler = () => {
+    console.log("toggle");
+  };
+
+  // const finalStyle = open ? `${classes.select}` :
+
   return (
     <div>
-      <Button className={classes.button} onClick={handleOpen}>
+      <SuperButton className={classes.button} onClick={handleOpen}>
         Open the select
-      </Button>
-      <FormControl className={classes.formControl}>
-        <InputLabel id="demo-controlled-open-select-label">Letters</InputLabel>
-        <Select
-          open={open}
-          onClose={handleClose}
-          onOpen={handleOpen}
-          onChange={onChangeHandler}
-          value={restProps.value}
-          //   {...restProps}
-        >
-          {mappedOptions}
-        </Select>
-      </FormControl>
+      </SuperButton>
+      <select className={classes.select} onChange={toogleHandler}>
+        {/* <option>Select element</option> */}
+        {selectOptions.map((el, ind) => (
+          <option key={ind + 1}>{el}</option>
+        ))}
+      </select>
     </div>
   );
 };

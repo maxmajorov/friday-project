@@ -1,20 +1,25 @@
 import { applyMiddleware, combineReducers, createStore, Store } from "redux";
 import thunkMiddleware from "redux-thunk";
-import { tasksReducer, todoListReducer } from "./reducers";
 import { composeWithDevTools } from "redux-devtools-extension";
+import {
+  authReducer,
+  changePassReducer,
+  profileReducer,
+  recoverPassReducer,
+  registrationReducer,
+} from "./reducers";
 
 // ======Создаем Store======
 
 const rootReducers = combineReducers({
-  todoList: todoListReducer,
-  task: tasksReducer,
+  profile: profileReducer,
+  authorization: authReducer,
+  recoverPassword: recoverPassReducer,
+  changePassword: changePassReducer,
+  registration: registrationReducer,
 });
 
 type RootReducersType = typeof rootReducers;
-
-// export const store = configureStore({
-//   reducer: rootReducers,
-// });
 
 export const store: Store<RootStateType> = createStore(
   rootReducers,

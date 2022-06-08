@@ -1,7 +1,7 @@
 import React from "react";
 import classes from "./Error404.module.css";
 
-const Error404 = () => {
+export const Error404 = () => {
   return (
     <div className={classes.errorPage}>
       <div>
@@ -15,5 +15,3 @@ const Error404 = () => {
     </div>
   );
 };
-
-export default Error404;

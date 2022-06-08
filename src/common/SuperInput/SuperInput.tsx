@@ -4,7 +4,7 @@ import React, {
   InputHTMLAttributes,
   KeyboardEvent,
 } from "react";
-import Input from "@material-ui/core/Input";
+
 import s from "./SuperInput.module.css";
 
 // тип пропсов обычного инпута
@@ -62,7 +62,7 @@ export const SuperInput: React.FC<SuperInputPropsType> = ({
 
   return (
     <>
-      <Input
+      <input
         type={"text"}
         onBlur={onBlur}
         onChange={onChangeCallback}
