@@ -1,19 +1,21 @@
-import React from "react";
-import ReactDOM from "react-dom";
-import "./index.css";
-import { App } from "./App";
-import * as serviceWorker from "./serviceWorker";
-import { Provider } from "react-redux";
-import { store } from "./store/store";
-import { HashRouter } from "react-router-dom";
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import {Provider} from 'react-redux';
+import {HashRouter} from 'react-router-dom';
+import './index.css';
+import {App} from './app/App';
+import {store} from './bll/store';
+import reportWebVitals from './reportWebVitals';
 
-ReactDOM.render(
-  <HashRouter>
-    <Provider store={store}>
-      <App />
-    </Provider>
-  </HashRouter>,
-  document.getElementById("root")
+// @ts-ignore
+const root = ReactDOM.createRoot(document.getElementById('root'));
+
+root.render(
+    <HashRouter>
+        <Provider store={store}>
+            <App/>
+        </Provider>
+    </HashRouter>
 );
 
-serviceWorker.unregister();
+reportWebVitals();

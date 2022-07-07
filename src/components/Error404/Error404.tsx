@@ -1,17 +1,14 @@
-import React from "react";
-import classes from "./Error404.module.css";
+import React from 'react';
+import style from './Error404.module.css';
 
-export const Error404 = () => {
-  return (
-    <div className={classes.errorPage}>
-      <div>
-        <h1 className={classes.errorNum}>-404-</h1>
-      </div>
-      <div>
-        <h2 className={classes.errorTitle}>Page not found!</h2>
-      </div>
+const Error404: React.FC=()=> {
+    return (
+        <div className={style.wrapper_error}>
+            <div className={style.number}>404</div>
+            <div className={style.page}>Page not found!</div>
+            <div className={style.picture}></div>
+        </div>
+    );
+}
 
-      <canvas id="canv"></canvas>
-    </div>
-  );
-};
+export default Error404;
