@@ -18,6 +18,9 @@ import GradeIcon from "@mui/icons-material/Grade";
 import style from "./CardsTable.module.css";
 import { Link, useNavigate } from "react-router-dom";
 import { PATH } from "../../components/common/routes/RoutesConstants";
+import { useLocation } from "react-router-dom";
+import { useAppDispatch, useAppSelector } from "../../bll/store";
+import { getCardsListTC } from "../../bll/reducers/cards-reducer";
 
 interface Data {
   question: string;
@@ -57,42 +60,6 @@ const rows = [
     "What is WebWorker?",
     "It is a service...",
     new Date("11/5/2022") /*.toLocaleDateString()*/,
-    "star"
-  ),
-  createData(
-    "What is WebWorker?",
-    "It is a service...",
-    new Date("3/3/2022") /*.toLocaleDateString()*/,
-    "star"
-  ),
-  createData(
-    "What is WebWorker?",
-    "It is a service...",
-    new Date("6/2/2022") /*.toLocaleDateString()*/,
-    "star"
-  ),
-  createData(
-    "What is WebWorker?",
-    "It is a service...",
-    new Date("12/17/2021") /*.toLocaleDateString()*/,
-    "star"
-  ),
-  createData(
-    "What is WebWorker?",
-    "It is a service...",
-    new Date("1/24/2022") /*.toLocaleDateString()*/,
-    "star"
-  ),
-  createData(
-    "What is WebWorker?",
-    "It is a service...",
-    new Date("9/5/2022") /*.toLocaleDateString()*/,
-    "star"
-  ),
-  createData(
-    "What is WebWorker?",
-    "It is a service...",
-    new Date("1/1/2022") /*.toLocaleDateString()*/,
     "star"
   ),
 ];
@@ -246,21 +213,26 @@ const EnhancedTableToolbar = () => {
 export const CardsTable = () => {
   const [order, setOrder] = React.useState<Order>("asc");
   const [orderBy, setOrderBy] = React.useState<keyof Data>("lastUpdated");
-  const [page, setPage] = React.useState(0);
+  const [page, setPage] = React.useState(1);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
 
   const navigate = useNavigate();
 
-  // const dispatch = useAppDispatch();
-  // const cardsSelector = useAppSelector((state) => state.cards.cards);
-  // const cardsForRender = cardsSelector.map((card) => card.question);
+  const dispatch = useAppDispatch();
+  const cardsSelector = useAppSelector((state) => state.cards.cards);
 
-  // React.useEffect(() => {
-  //   dispatch(getPacksListTC(1, 8));
+  interface LocationType {
+    pack_id: string;
+  }
 
-  //   dispatch(getCardsListTC(1, 8, "62c551acbe53c41174945eec"));
-  //   dispatch(addCardTC(1, 8, "React???", "Library", "62c551acbe53c41174945eec"));
-  // }, []);
+  const location = useLocation();
+  let { pack_id } = location.state as LocationType;
+
+  console.log(pack_id);
+
+  React.useEffect(() => {
+    dispatch(getCardsListTC(page, rowsPerPage, pack_id));
+  }, [page, rowsPerPage, pack_id]);
 
   const handleRequestSort = (
     event: React.MouseEvent<unknown>,
@@ -308,7 +280,7 @@ export const CardsTable = () => {
               onRequestSort={handleRequestSort}
             />
             <TableBody>
-              {stableSort<Data>(rows, getComparator(order, orderBy))
+              {stableSort(cardsSelector, getComparator(order, orderBy))
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row, index) => {
                   const labelId = `enhanced-table-checkbox-${index}`;
@@ -316,7 +288,7 @@ export const CardsTable = () => {
                   return (
                     <TableRow
                       hover
-                      key={row.question}
+                      key={index}
                       onClick={() =>
                         navigate(PATH.PROFILE, {
                           state: { question: row.question, answer: row.answer },
@@ -351,7 +323,7 @@ export const CardsTable = () => {
                             ?.textAlign
                         }
                       >
-                        {row.lastUpdated.toLocaleDateString()}
+                        {row.updated.slice(0, 10)}
                       </TableCell>
                       <TableCell
                         padding="normal"

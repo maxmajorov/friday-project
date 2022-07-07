@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import TableBody from "@mui/material/TableBody";
 import {
   Button,
@@ -13,11 +13,18 @@ import TableCell from "@mui/material/TableCell";
 import TableSortLabel from "@mui/material/TableSortLabel";
 import Box from "@mui/material/Box";
 import { useSelector } from "react-redux";
-import { AppRootStateType } from "../../bll/store";
+import {
+  AppRootStateType,
+  useAppDispatch,
+  useAppSelector,
+} from "../../bll/store";
 import { Delete } from "@mui/icons-material";
 import CreateIcon from "@mui/icons-material/Create";
 import ApiIcon from "@mui/icons-material/Api";
 import TablePagination from "@mui/material/TablePagination";
+import { getPacksListTC } from "../../bll/reducers/packs-reducer";
+import { PATH } from "../../components/common/routes/RoutesConstants";
+import { useNavigate } from "react-router-dom";
 
 export type cardType = {
   _id: string;
@@ -80,24 +87,24 @@ export function EnhancedTableHead() {
 }
 
 export function PacksTable() {
-  const [page, setPage] = React.useState(0);
+  const [page, setPage] = React.useState(1);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  const dispatch = useAppDispatch();
 
+  const navigate = useNavigate();
   // const totalPacksCount = useSelector<AppRootStateType, number | null>(
   //   (state) => state.cards.cardPacksTotalCount
   // );
-  // const cardPacks = useSelector<AppRootStateType, any>(
-  //   (state) => state.cards.cardPacks
-  // );
+  const cardPacks = useAppSelector((state) => state.packs.packsCards);
 
   useEffect(() => {
-    dispatch(getPacksListTC(1, 8));
+    dispatch(getPacksListTC(page, rowsPerPage));
 
-    dispatch(getCardsListTC(1, 8, "62c551acbe53c41174945eec"));
-    dispatch(
-      addCardTC(1, 8, "React???", "Library", "62c551acbe53c41174945eec")
-    );
-  }, []);
+    // dispatch(getCardsListTC(1, 8, "62c551acbe53c41174945eec"));
+    // dispatch(
+    //   addCardTC(1, 8, "React???", "Library", "62c551acbe53c41174945eec")
+    // );
+  }, [page, rowsPerPage]);
 
   const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage);
@@ -117,15 +124,27 @@ export function PacksTable() {
           <Table sx={{ minWidth: 750 }} size={"medium"}>
             <EnhancedTableHead />
             <TableBody>
-              {[].map((card: cardType, index: number) => {
+              {cardPacks.map((card, index) => {
                 return (
-                  <TableRow hover>
+                  <TableRow
+                    hover
+                    key={index}
+                    onClick={() =>
+                      navigate(PATH.CARDS_LIST, {
+                        state: { pack_id: card._id },
+                      })
+                    }
+                  >
                     <TableCell component="th" scope="row" padding="none">
                       {card.name}
                     </TableCell>
                     <TableCell align="right">{card.cardsCount}</TableCell>
-                    <TableCell align="right">{card.updated}</TableCell>
-                    <TableCell align="right">{card.created}</TableCell>
+                    <TableCell align="right">
+                      {card.updated.slice(0, 10)}
+                    </TableCell>
+                    <TableCell align="right">
+                      {card.created.slice(0, 10)}
+                    </TableCell>
                     <TableCell align="right">
                       <IconButton>
                         <ApiIcon />
