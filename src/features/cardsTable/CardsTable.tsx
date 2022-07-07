@@ -29,41 +29,6 @@ interface Data {
   grade: string;
 }
 
-function createData(
-  question: string,
-  answer: string,
-  lastUpdated: Date,
-  grade: string
-): Data {
-  return {
-    question,
-    answer,
-    lastUpdated,
-    grade,
-  };
-}
-
-const rows = [
-  createData(
-    "What is WebWorker?",
-    "It is a service...",
-    new Date("7/6/2022") /*.toLocaleDateString()*/,
-    "star"
-  ),
-  createData(
-    "What is WebWorker?",
-    "It is a service...",
-    new Date("6/6/2022") /*.toLocaleDateString()*/,
-    "star"
-  ),
-  createData(
-    "What is WebWorker?",
-    "It is a service...",
-    new Date("11/5/2022") /*.toLocaleDateString()*/,
-    "star"
-  ),
-];
-
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
   if (b[orderBy] < a[orderBy]) {
     return -1;
@@ -193,7 +158,7 @@ function EnhancedTableHead(props: EnhancedTableProps) {
 const EnhancedTableToolbar = () => {
   return (
     <Toolbar>
-      <Link to={PATH.REGISTRATION}>
+      <Link to={PATH.PACKS_LIST}>
         <Button style={{ marginRight: "10px" }}>
           <ArrowBackOutlinedIcon />
         </Button>
@@ -220,6 +185,10 @@ export const CardsTable = () => {
 
   const dispatch = useAppDispatch();
   const cardsSelector = useAppSelector((state) => state.cards.cards);
+  const cardsTotalCountSelector = useAppSelector(
+    (state) => state.cards.cardsTotalCount
+  );
+  console.log(cardsSelector);
 
   interface LocationType {
     pack_id: string;
@@ -228,11 +197,9 @@ export const CardsTable = () => {
   const location = useLocation();
   let { pack_id } = location.state as LocationType;
 
-  console.log(pack_id);
-
   React.useEffect(() => {
     dispatch(getCardsListTC(page, rowsPerPage, pack_id));
-  }, [page, rowsPerPage, pack_id]);
+  }, [dispatch, page, rowsPerPage, pack_id]);
 
   const handleRequestSort = (
     event: React.MouseEvent<unknown>,
@@ -251,12 +218,12 @@ export const CardsTable = () => {
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
     setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
+    setPage(1);
   };
 
   const labelDisplayedRows = ({ from, to, count }: any) => {
-    console.log(from, to, count, rows.length);
-    return `${page + 1} of ${Math.ceil(count / rowsPerPage)}`;
+    console.log(from, to, count, cardsTotalCountSelector);
+    return `${page} of ${Math.ceil(count / rowsPerPage)}`;
   };
 
   return (
@@ -281,7 +248,7 @@ export const CardsTable = () => {
             />
             <TableBody>
               {stableSort(cardsSelector, getComparator(order, orderBy))
-                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                // .slice(1, page * rowsPerPage + rowsPerPage)
                 .map((row, index) => {
                   const labelId = `enhanced-table-checkbox-${index}`;
 
@@ -290,7 +257,7 @@ export const CardsTable = () => {
                       hover
                       key={index}
                       onClick={() =>
-                        navigate(PATH.PROFILE, {
+                        navigate(PATH.CARD_INFO, {
                           state: { question: row.question, answer: row.answer },
                         })
                       }
@@ -354,7 +321,7 @@ export const CardsTable = () => {
           showLastButton={true}
           rowsPerPageOptions={[5, 10, 25]}
           component="div"
-          count={rows.length}
+          count={cardsTotalCountSelector}
           rowsPerPage={rowsPerPage}
           page={page}
           onPageChange={handleChangePage}
