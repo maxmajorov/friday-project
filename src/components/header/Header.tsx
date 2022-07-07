@@ -14,16 +14,11 @@ export const Header: React.FC = () => {
           {/* //изменить на packs */}
 
           <NavLink
-            to={PATH.CARDS_LIST}
+            to={PATH.PACKS_LIST}
             className={({ isActive }) =>
               style.link + " " + (isActive ? style.active : "")
             }
           >
-            {/* <div
-            style={{
-              backgroundColor: `url(${cardsIcon})}`,
-            }}
-          /> */}
             <img src={cardsIcon} className={style.icon} alt="card-icon" />
             Packs list
           </NavLink>
