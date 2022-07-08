@@ -6,9 +6,9 @@ export const instance = axios.create({
 });
 
 export const getPacksAPI = {
-  getAllPacksList(page: number, pageCount: number) {
+  getAllPacksList(pageCount: number) {
     return instance.get<any, AxiosResponse<PacksResponseType>, any>(
-      `cards/pack?page=${page}&pageCount=${pageCount}`
+      `cards/pack?pageCount=${pageCount}`
     );
   },
 

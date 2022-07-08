@@ -1,6 +1,10 @@
 import { AxiosError } from "axios";
 import { AppRootStateType, AppThunk } from "../store";
-import { getPacksAPI, PacksResponseType } from "../../api/packs-api";
+import {
+  CardPacksType,
+  getPacksAPI,
+  PacksResponseType,
+} from "../../api/packs-api";
 import { appSetStatusAC } from "./app-reducer";
 import { handleNetworkError } from "../../utils/errorUtils";
 
@@ -52,6 +56,13 @@ export const packsReducer = (
       };
     }
 
+    case "PACKS/set-filtered-packs": {
+      return {
+        ...state,
+        packsCards: action.data,
+      };
+    }
+
     default:
       return state;
   }
@@ -65,14 +76,17 @@ export const getAllPacksAC = (data: PacksResponseType) =>
 export const getPacksCardsAC = (data: PacksResponseType) =>
   ({ type: "PACKS/get-one-page-packs", data } as const);
 
+export const setFilteredPacksAC = (data: Array<CardPacksType>) =>
+  ({ type: "PACKS/set-filtered-packs", data } as const);
+
 // ==== THUNKS =====
 
 export const getAllPacksListTC =
-  (page: number, pageCount: number): AppThunk =>
+  (pageCount: number): AppThunk =>
   async (dispatch) => {
     try {
       dispatch(appSetStatusAC("loading"));
-      const response = await getPacksAPI.getAllPacksList(page, pageCount);
+      const response = await getPacksAPI.getAllPacksList(pageCount);
       console.log(response);
       if (response.status === 200) {
         dispatch(getAllPacksAC(response.data));
@@ -240,5 +254,9 @@ export type RequestStatusType = "idle" | "loading" | "succeeded" | "failed";
 
 export type GetPacksCardsType = ReturnType<typeof getPacksCardsAC>;
 export type GetAllPacksType = ReturnType<typeof getAllPacksAC>;
+export type SetFilteredPacksType = ReturnType<typeof setFilteredPacksAC>;
 
-export type PacksActionsTypes = GetAllPacksType | GetPacksCardsType;
+export type PacksActionsTypes =
+  | GetAllPacksType
+  | GetPacksCardsType
+  | SetFilteredPacksType;

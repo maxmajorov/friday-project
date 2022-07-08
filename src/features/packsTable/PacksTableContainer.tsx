@@ -12,15 +12,12 @@ import style from "./PacksTableContainer.module.css";
 import { SearchForm } from "../searchForm/SearchForm";
 import { allPacksSelect } from "../../bll/reducers/packs-reducer";
 
-const ariaLabel = { "aria-label": "description" };
+// const ariaLabel = { "aria-label": "description" };
 
 export const PacksTableContainer: React.FC = () => {
   const dispatch = useAppDispatch();
   const isLoggedIn = useAppSelector(isLoggedInSelector);
   const status = useAppSelector(appStatusSelect);
-
-  const packsSelector = useAppSelector((state) => state.packs.packsCards);
-  const allPacks = useAppSelector(allPacksSelect);
 
   if (!isLoggedIn) {
     return <Navigate to={PATH.LOGIN} />;
@@ -43,10 +40,6 @@ export const PacksTableContainer: React.FC = () => {
 
           <Grid item xs={10} className={style.rightSide}>
             <h4 className={style.rightTitle}>Packs list</h4>
-            <div>
-              <SearchForm data={packsSelector} />
-              <button>add new pack</button>
-            </div>
             <PacksTable />
           </Grid>
         </Grid>

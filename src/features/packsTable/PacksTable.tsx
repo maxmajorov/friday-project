@@ -1,12 +1,15 @@
-import React, { useEffect } from "react";
+import React, { ChangeEvent, useEffect, useState } from "react";
 import TableBody from "@mui/material/TableBody";
 import {
+  Button,
   IconButton,
+  InputAdornment,
   Paper,
   Table,
   TableContainer,
   TableHead,
   TableRow,
+  TextField,
 } from "@mui/material";
 import TableCell from "@mui/material/TableCell";
 import TableSortLabel from "@mui/material/TableSortLabel";
@@ -18,11 +21,17 @@ import ApiIcon from "@mui/icons-material/Api";
 import { visuallyHidden } from "@mui/utils";
 import TablePagination from "@mui/material/TablePagination";
 import {
+  allPacksSelect,
   getAllPacksListTC,
+  getPacksCardsAC,
   getPacksListTC,
+  setFilteredPacksAC,
 } from "../../bll/reducers/packs-reducer";
 import { PATH } from "../../components/common/routes/RoutesConstants";
 import { useNavigate } from "react-router-dom";
+import { SearchForm } from "../searchForm/SearchForm";
+import { CardPacksType } from "../../api/packs-api";
+import SearchIcon from "@mui/icons-material/Search";
 
 interface Data {
   id: string;
@@ -174,6 +183,7 @@ export function PacksTable() {
 
   const navigate = useNavigate();
 
+  // const allPacks = useAppSelector(allPacksSelect);
   const totalPacksCount = useAppSelector(
     (state) => state.packs.cardPacksTotalCount
   );
@@ -181,7 +191,7 @@ export function PacksTable() {
 
   useEffect(() => {
     dispatch(getPacksListTC(page, rowsPerPage));
-    // dispatch(getAllPacksListTC(page, totalPacksCount)); //выбрасывает из приложения
+    // dispatch(getAllPacksListTC(totalPacksCount));
   }, [dispatch, page, rowsPerPage, totalPacksCount]);
 
   const handleRequestSort = (
@@ -211,9 +221,44 @@ export function PacksTable() {
     return `${page} of ${Math.ceil(count / rowsPerPage)}`;
   };
 
+  // const searchCallback = (filteredData: Array<CardPacksType>) => {
+  //   dispatch(setFilteredPacksAC(filteredData));
+  // };
+
+  // ==== SEARCHING =====
+
+  const [value, setValue] = useState("");
+
+  const filteredData = packsSelector.filter((pack) =>
+    pack.name.toLowerCase().includes(value.toLowerCase())
+  );
+
+  const onChangeHandler = (
+    event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    setValue(event.target.value);
+  };
+
   return (
     <Box sx={{ width: "100%" }}>
       <Paper>
+        <div style={{ marginBottom: "20px" }}>
+          <TextField
+            size={"small"}
+            InputProps={{
+              type: "search",
+              startAdornment: (
+                <InputAdornment position="start">
+                  <SearchIcon />
+                </InputAdornment>
+              ),
+            }}
+            onChange={onChangeHandler}
+          />
+          <Button variant="contained" style={{ marginLeft: "30px" }}>
+            add new pack
+          </Button>
+        </div>
         <TableContainer>
           <Table
             sx={{ minWidth: 750 }}
@@ -226,7 +271,7 @@ export function PacksTable() {
               onRequestSort={handleRequestSort}
             />
             <TableBody>
-              {stableSort(packsSelector, getComparator(order, orderBy))
+              {stableSort(filteredData, getComparator(order, orderBy))
                 // .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((card, index) => {
                   const labelId = `enhanced-table-checkbox-${index}`;
