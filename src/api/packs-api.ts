@@ -6,11 +6,18 @@ export const instance = axios.create({
 });
 
 export const getPacksAPI = {
+  getAllPacksList(page: number, pageCount: number) {
+    return instance.get<any, AxiosResponse<PacksResponseType>, any>(
+      `cards/pack?page=${page}&pageCount=${pageCount}`
+    );
+  },
+
   getUserPacksList(page: number, pageCount: number = 8, userID: string) {
     return instance.get<any, AxiosResponse<PacksResponseType>, any>(
       `cards/pack?page=${page}&pageCount=${pageCount}&user_id=${userID}`
     );
   },
+
   getPacksList(page: number, pageCount: number = 8) {
     return instance.get<any, AxiosResponse<PacksResponseType>, any>(
       `cards/pack?page=${page}&pageCount=${pageCount}`

@@ -1,5 +1,5 @@
 import { AxiosError } from "axios";
-import { AppThunk } from "../store";
+import { AppRootStateType, AppThunk } from "../store";
 import { getPacksAPI, PacksResponseType } from "../../api/packs-api";
 import { appSetStatusAC } from "./app-reducer";
 import { handleNetworkError } from "../../utils/errorUtils";
@@ -8,6 +8,16 @@ import { handleNetworkError } from "../../utils/errorUtils";
 // 'idle' | 'succeeded' | 'failed' => preloader unvisible
 
 const initialState = {
+  allPacks: [
+    {
+      _id: "",
+      user_id: "",
+      name: "",
+      cardsCount: 0,
+      created: "",
+      updated: "",
+    },
+  ],
   packsCards: [
     {
       _id: "",
@@ -26,8 +36,15 @@ export const packsReducer = (
   action: PacksActionsTypes
 ): InitialStateType => {
   switch (action.type) {
-    case "PACKS/get-one-page-packs": {
+    case "PACKS/get-all-packs": {
       console.log(action.data);
+      return {
+        ...state,
+        allPacks: action.data.cardPacks,
+      };
+    }
+
+    case "PACKS/get-one-page-packs": {
       return {
         ...state,
         packsCards: action.data.cardPacks,
@@ -42,10 +59,31 @@ export const packsReducer = (
 
 // ==== ACTIONS =====
 
+export const getAllPacksAC = (data: PacksResponseType) =>
+  ({ type: "PACKS/get-all-packs", data } as const);
+
 export const getPacksCardsAC = (data: PacksResponseType) =>
   ({ type: "PACKS/get-one-page-packs", data } as const);
 
 // ==== THUNKS =====
+
+export const getAllPacksListTC =
+  (page: number, pageCount: number): AppThunk =>
+  async (dispatch) => {
+    try {
+      dispatch(appSetStatusAC("loading"));
+      const response = await getPacksAPI.getAllPacksList(page, pageCount);
+      console.log(response);
+      if (response.status === 200) {
+        dispatch(getAllPacksAC(response.data));
+      }
+    } catch (e) {
+      const err = e as Error | AxiosError<{ error: string }>;
+      handleNetworkError(dispatch, err);
+    } finally {
+      dispatch(appSetStatusAC("idle"));
+    }
+  };
 
 export const getPacksListTC =
   (page: number, pageCount: number): AppThunk =>
@@ -188,7 +226,9 @@ export const updatePackNameTC =
 
 // ==== SELECTORS ====
 
+export const allPacksSelect = (state: AppRootStateType) => state.packs.allPacks;
 /*
+allPacks
 export const appErrorSelect = (state: AppRootStateType) => state.app.error;
 export const appStatusSelect = (state: AppRootStateType) => state.app.status;
 export const initializeAppSelect = (state: AppRootStateType) => state.app.isInitializeApp;
@@ -199,5 +239,6 @@ export type InitialStateType = typeof initialState;
 export type RequestStatusType = "idle" | "loading" | "succeeded" | "failed";
 
 export type GetPacksCardsType = ReturnType<typeof getPacksCardsAC>;
+export type GetAllPacksType = ReturnType<typeof getAllPacksAC>;
 
-export type PacksActionsTypes = GetPacksCardsType;
+export type PacksActionsTypes = GetAllPacksType | GetPacksCardsType;

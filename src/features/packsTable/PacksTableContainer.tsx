@@ -3,13 +3,14 @@ import { useAppDispatch, useAppSelector } from "../../bll/store";
 import { Navigate } from "react-router-dom";
 import { PATH } from "../../components/common/routes/RoutesConstants";
 import Grid from "@mui/material/Grid";
-import Paper from "@mui/material/Paper";
 import LinearProgress from "@mui/material/LinearProgress";
 import { isLoggedInSelector } from "../../bll/reducers/auth-reducer";
 import { appStatusSelect } from "../../bll/reducers/app-reducer";
-import { Input } from "@mui/material";
-import { getCardsListTC } from "../../bll/reducers/cards-reducer";
+import { Box } from "@mui/material";
 import { PacksTable } from "./PacksTable";
+import style from "./PacksTableContainer.module.css";
+import { SearchForm } from "../searchForm/SearchForm";
+import { allPacksSelect } from "../../bll/reducers/packs-reducer";
 
 const ariaLabel = { "aria-label": "description" };
 
@@ -18,9 +19,8 @@ export const PacksTableContainer: React.FC = () => {
   const isLoggedIn = useAppSelector(isLoggedInSelector);
   const status = useAppSelector(appStatusSelect);
 
-  useEffect(() => {
-    // dispatch(getCardsListTC());
-  }, []);
+  const packsSelector = useAppSelector((state) => state.packs.packsCards);
+  const allPacks = useAppSelector(allPacksSelect);
 
   if (!isLoggedIn) {
     return <Navigate to={PATH.LOGIN} />;
@@ -33,36 +33,24 @@ export const PacksTableContainer: React.FC = () => {
   return (
     <>
       {status === "loading" && <LinearProgress />}
-      <div>
-        <Grid container justifyContent="center" spacing={0.5}>
-          <Grid item xs={2}>
-            <Paper
-              sx={{
-                height: 900,
-              }}
-            >
-              <div>Show packs cards</div>
-              <button>my</button>
-              {/* <button onClick={onClickHandler}>all</button> */}
-            </Paper>
+      <Box className={style.container}>
+        <Grid container justifyContent="center" spacing={1}>
+          <Grid item xs={2} className={style.leftSide}>
+            <h4 className={style.leftTitle}>Show packs cards</h4>
+            <button>my</button>
+            {/* <button onClick={onClickHandler}>all</button> */}
           </Grid>
 
-          <Grid item xs={8}>
-            <Paper
-              sx={{
-                height: 900,
-              }}
-            >
-              Packs list
-              <div>
-                <Input defaultValue="Search" inputProps={ariaLabel} />
-                <button>add new pack</button>
-              </div>
-              <PacksTable />
-            </Paper>
+          <Grid item xs={10} className={style.rightSide}>
+            <h4 className={style.rightTitle}>Packs list</h4>
+            <div>
+              <SearchForm data={packsSelector} />
+              <button>add new pack</button>
+            </div>
+            <PacksTable />
           </Grid>
         </Grid>
-      </div>
+      </Box>
     </>
   );
 };

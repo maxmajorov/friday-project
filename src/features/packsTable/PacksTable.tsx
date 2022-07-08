@@ -1,15 +1,12 @@
 import React, { useEffect } from "react";
 import TableBody from "@mui/material/TableBody";
 import {
-  Button,
   IconButton,
   Paper,
   Table,
   TableContainer,
   TableHead,
   TableRow,
-  Toolbar,
-  Typography,
 } from "@mui/material";
 import TableCell from "@mui/material/TableCell";
 import TableSortLabel from "@mui/material/TableSortLabel";
@@ -19,12 +16,13 @@ import { Delete } from "@mui/icons-material";
 import CreateIcon from "@mui/icons-material/Create";
 import ApiIcon from "@mui/icons-material/Api";
 import { visuallyHidden } from "@mui/utils";
-import ArrowBackOutlinedIcon from "@mui/icons-material/ArrowBackOutlined";
 import TablePagination from "@mui/material/TablePagination";
-import { getPacksListTC } from "../../bll/reducers/packs-reducer";
+import {
+  getAllPacksListTC,
+  getPacksListTC,
+} from "../../bll/reducers/packs-reducer";
 import { PATH } from "../../components/common/routes/RoutesConstants";
 import { useNavigate } from "react-router-dom";
-import { Link } from "react-router-dom";
 
 interface Data {
   id: string;
@@ -167,30 +165,10 @@ function EnhancedTableHead(props: EnhancedTableProps) {
   );
 }
 
-const EnhancedTableToolbar = () => {
-  return (
-    <Toolbar>
-      <Link to={PATH.REGISTRATION}>
-        <Button style={{ marginRight: "10px" }}>
-          <ArrowBackOutlinedIcon />
-        </Button>
-      </Link>
-      <Typography
-        sx={{ flex: "1 1 100%" }}
-        variant="h6"
-        id="tableTitle"
-        component="div"
-      >
-        Pack Name
-      </Typography>
-    </Toolbar>
-  );
-};
-
 export function PacksTable() {
   const [order, setOrder] = React.useState<Order>("asc");
   const [orderBy, setOrderBy] = React.useState<keyof Data>("update");
-  const [page, setPage] = React.useState(0);
+  const [page, setPage] = React.useState(1);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const dispatch = useAppDispatch();
 
@@ -203,7 +181,8 @@ export function PacksTable() {
 
   useEffect(() => {
     dispatch(getPacksListTC(page, rowsPerPage));
-  }, [dispatch, page, rowsPerPage]);
+    // dispatch(getAllPacksListTC(page, totalPacksCount)); //выбрасывает из приложения
+  }, [dispatch, page, rowsPerPage, totalPacksCount]);
 
   const handleRequestSort = (
     event: React.MouseEvent<unknown>,
@@ -214,7 +193,10 @@ export function PacksTable() {
     setOrderBy(property);
   };
 
-  const handleChangePage = (event: unknown, newPage: number) => {
+  const handleChangePage = (
+    event: React.MouseEvent<HTMLButtonElement> | null,
+    newPage: number
+  ) => {
     setPage(newPage);
   };
 
@@ -222,21 +204,15 @@ export function PacksTable() {
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
     setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
+    setPage(1);
   };
 
   const labelDisplayedRows = ({ from, to, count }: any) => {
-    return `${page + 1} of ${Math.ceil(count / rowsPerPage)}`;
+    return `${page} of ${Math.ceil(count / rowsPerPage)}`;
   };
 
   return (
     <Box sx={{ width: "100%" }}>
-      <EnhancedTableToolbar />
-      <input
-        type={"text"}
-        placeholder={"Search..."}
-        style={{ margin: "0 0 16px 0" }}
-      />
       <Paper>
         <TableContainer>
           <Table
@@ -274,8 +250,9 @@ export function PacksTable() {
                           headCells.find((cell) => cell.id === "name")
                             ?.textAlign
                         }
+                        style={{ paddingLeft: "30px" }}
                       >
-                        {card.name}
+                        {card.name.slice(0, 70)}
                       </TableCell>
                       <TableCell
                         padding="normal"

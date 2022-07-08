@@ -257,9 +257,18 @@ export const CardsTable = () => {
                       hover
                       key={index}
                       onClick={() =>
-                        navigate(PATH.CARD_INFO, {
-                          state: { question: row.question, answer: row.answer },
-                        })
+                        navigate(
+                          PATH.CARD_INFO,
+
+                          {
+                            // replace: true,
+                            state: {
+                              question: row.question,
+                              answer: row.answer,
+                              pack_id: pack_id,
+                            },
+                          }
+                        )
                       }
                     >
                       <TableCell
@@ -272,7 +281,7 @@ export const CardsTable = () => {
                             ?.textAlign
                         }
                       >
-                        {row.question}
+                        {row.question.slice(0, 70)}
                       </TableCell>
                       <TableCell
                         padding="normal"
@@ -281,7 +290,7 @@ export const CardsTable = () => {
                             ?.textAlign
                         }
                       >
-                        {row.answer}
+                        {row.answer.slice(0, 70)}
                       </TableCell>
                       <TableCell
                         padding="normal"

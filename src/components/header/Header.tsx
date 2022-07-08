@@ -19,6 +19,11 @@ export const Header: React.FC = () => {
               style.link + " " + (isActive ? style.active : "")
             }
           >
+            {/* <div
+            style={{
+              backgroundColor: `url(${cardsIcon})}`,
+            }}
+          /> */}
             <img src={cardsIcon} className={style.icon} alt="card-icon" />
             Packs list
           </NavLink>
