@@ -41,14 +41,12 @@ export const getPacksAPI = {
     );
   },
 
-  addPack(name: string, deckCover: string = "", _private: boolean = false) {
+  addPack(name: string) {
     //response игнорируем, заново запрос колод!!!
 
     const data: AddPackPayloadType = {
       cardsPack: {
-        name: name,
-        deckCover: deckCover,
-        private: _private,
+        name,
       },
     };
     return instance.post<

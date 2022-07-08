@@ -21,6 +21,7 @@ import ApiIcon from "@mui/icons-material/Api";
 import { visuallyHidden } from "@mui/utils";
 import TablePagination from "@mui/material/TablePagination";
 import {
+  addPackTC,
   allPacksSelect,
   getAllPacksListTC,
   getPacksCardsAC,
@@ -239,6 +240,13 @@ export function PacksTable() {
     setValue(event.target.value);
   };
 
+  // ==== ADD NEW PACK ====
+
+  const addNewPackCallback = () => {
+    dispatch(addPackTC("Training card_2"));
+    dispatch(getPacksListTC(page, rowsPerPage));
+  };
+
   return (
     <Box sx={{ width: "100%" }}>
       <Paper>
@@ -255,7 +263,11 @@ export function PacksTable() {
             }}
             onChange={onChangeHandler}
           />
-          <Button variant="contained" style={{ marginLeft: "30px" }}>
+          <Button
+            variant="contained"
+            style={{ marginLeft: "30px" }}
+            onClick={addNewPackCallback}
+          >
             add new pack
           </Button>
         </div>

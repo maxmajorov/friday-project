@@ -177,20 +177,14 @@ export const getSortPacksListTC =
   };
 
 export const addPackTC =
-  (
-    page: number,
-    pageCount: number,
-    name: string,
-    deckCover: string,
-    _private: boolean
-  ): AppThunk =>
+  (name: string): AppThunk =>
   async (dispatch) => {
     try {
       dispatch(appSetStatusAC("loading"));
-      const response = await getPacksAPI.addPack(name, deckCover, _private);
-      if (response.status === 200) {
-        dispatch(getPacksListTC(page, pageCount));
-      }
+      const response = await getPacksAPI.addPack(name);
+      // if (response.status === 200) {
+      //   dispatch(getPacksListTC(page, pageCount));
+      // }
     } catch (e) {
       const err = e as Error | AxiosError<{ error: string }>;
       handleNetworkError(dispatch, err);
