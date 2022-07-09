@@ -22,16 +22,14 @@ import { visuallyHidden } from "@mui/utils";
 import TablePagination from "@mui/material/TablePagination";
 import {
   addPackTC,
-  allPacksSelect,
-  getAllPacksListTC,
-  getPacksCardsAC,
+  deletePackTC,
   getPacksListTC,
-  setFilteredPacksAC,
+  packsSelect,
+  totalPacksCountSelect,
+  updatePackNameTC,
 } from "../../bll/reducers/packs-reducer";
 import { PATH } from "../../components/common/routes/RoutesConstants";
 import { useNavigate } from "react-router-dom";
-import { SearchForm } from "../searchForm/SearchForm";
-import { CardPacksType } from "../../api/packs-api";
 import SearchIcon from "@mui/icons-material/Search";
 
 interface Data {
@@ -184,16 +182,12 @@ export function PacksTable() {
 
   const navigate = useNavigate();
 
-  // const allPacks = useAppSelector(allPacksSelect);
-  const totalPacksCount = useAppSelector(
-    (state) => state.packs.cardPacksTotalCount
-  );
-  const packsSelector = useAppSelector((state) => state.packs.packsCards);
+  const totalPacksCount = useAppSelector(totalPacksCountSelect);
+  const packsSelector = useAppSelector(packsSelect);
 
   useEffect(() => {
     dispatch(getPacksListTC(page, rowsPerPage));
-    // dispatch(getAllPacksListTC(totalPacksCount));
-  }, [dispatch, page, rowsPerPage, totalPacksCount]);
+  }, [dispatch, page, rowsPerPage]);
 
   const handleRequestSort = (
     event: React.MouseEvent<unknown>,
@@ -222,10 +216,6 @@ export function PacksTable() {
     return `${page} of ${Math.ceil(count / rowsPerPage)}`;
   };
 
-  // const searchCallback = (filteredData: Array<CardPacksType>) => {
-  //   dispatch(setFilteredPacksAC(filteredData));
-  // };
-
   // ==== SEARCHING =====
 
   const [value, setValue] = useState("");
@@ -240,10 +230,26 @@ export function PacksTable() {
     setValue(event.target.value);
   };
 
+  // ==== ACTIONS ====
+
   // ==== ADD NEW PACK ====
 
   const addNewPackCallback = () => {
     dispatch(addPackTC("Training card_2"));
+    dispatch(getPacksListTC(page, rowsPerPage));
+  };
+
+  // ==== DELETE PACK ====
+
+  const deletePackHandler = (packID: string) => {
+    dispatch(deletePackTC(packID));
+    dispatch(getPacksListTC(page, rowsPerPage));
+  };
+
+  // ==== UPDATE PACK NAME ====
+
+  const updatePackHandler = (packID: string) => {
+    dispatch(updatePackNameTC(packID, "Updated name"));
     dispatch(getPacksListTC(page, rowsPerPage));
   };
 
@@ -289,15 +295,7 @@ export function PacksTable() {
                   const labelId = `enhanced-table-checkbox-${index}`;
 
                   return (
-                    <TableRow
-                      hover
-                      key={index}
-                      onClick={() =>
-                        navigate(PATH.CARDS_LIST, {
-                          state: { pack_id: card._id },
-                        })
-                      }
-                    >
+                    <TableRow hover key={index}>
                       <TableCell
                         component="th"
                         id={labelId}
@@ -306,6 +304,11 @@ export function PacksTable() {
                         align={
                           headCells.find((cell) => cell.id === "name")
                             ?.textAlign
+                        }
+                        onClick={() =>
+                          navigate(PATH.CARDS_LIST, {
+                            state: { pack_id: card._id },
+                          })
                         }
                         style={{ paddingLeft: "30px" }}
                       >
@@ -342,10 +345,10 @@ export function PacksTable() {
                         <IconButton>
                           <ApiIcon />
                         </IconButton>
-                        <IconButton>
+                        <IconButton onClick={() => deletePackHandler(card._id)}>
                           <Delete />
                         </IconButton>
-                        <IconButton>
+                        <IconButton onClick={() => updatePackHandler(card._id)}>
                           <CreateIcon />
                         </IconButton>
                       </TableCell>
