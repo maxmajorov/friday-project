@@ -1,14 +1,10 @@
-import axios, { AxiosResponse } from "axios";
-
-export const instance = axios.create({
-  baseURL: process.env.REACT_APP_BACK_URL || "http://localhost:7542/2.0/",
-  withCredentials: true,
-});
+import { AxiosResponse } from "axios";
+import { instance } from "./api-instance";
 
 export const getCardsAPI = {
-  getCardsList(page: number, pageCount: number = 8, cardsPackID: string) {
+  getCardsList(cardsPackID: string, cardsCount: number) {
     return instance.get<any, AxiosResponse<CardsResponseType>, any>(
-      `cards/card?page=${page}&pageCount=${pageCount}&cardsPack_id=${cardsPackID}`
+      `cards/card?cardsPack_id=${cardsPackID}&pageCount=${cardsCount}`
     );
   },
 

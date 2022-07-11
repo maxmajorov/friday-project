@@ -1,20 +1,10 @@
-import axios, { AxiosResponse } from "axios";
-
-export const instance = axios.create({
-  baseURL: process.env.REACT_APP_BACK_URL || "http://localhost:7542/2.0/",
-  withCredentials: true,
-});
+import { AxiosResponse } from "axios";
+import { instance } from "./api-instance";
 
 export const getPacksAPI = {
-  getAllPacksList(pageCount: number) {
+  getUserPacksList(userID: string) {
     return instance.get<any, AxiosResponse<PacksResponseType>, any>(
-      `cards/pack?pageCount=${pageCount}`
-    );
-  },
-
-  getUserPacksList(page: number, pageCount: number = 8, userID: string) {
-    return instance.get<any, AxiosResponse<PacksResponseType>, any>(
-      `cards/pack?page=${page}&pageCount=${pageCount}&user_id=${userID}`
+      `cards/pack?user_id=${userID}`
     );
   },
 
@@ -24,26 +14,30 @@ export const getPacksAPI = {
     );
   },
 
+  getSearchPacksList(value: string) {
+    return instance.get<any, AxiosResponse<PacksResponseType>, any>(
+      `cards/pack?packName=${value}`
+    );
+  },
+
   getRangeredPacksList(
     page: number,
     pageCount: number = 8,
-    min: number = 0, // значения брать из range
-    max: number = 110 // значения брать из range
+    min: number = 0,
+    max: number = 110
   ) {
     return instance.get<any, AxiosResponse<PacksResponseType>, any>(
       `cards/pack?page=${page}&pageCount=${pageCount}&min=${min}&max=${max}`
     );
   },
 
-  getSortPacksList(page: number, pageCount: number = 8) {
+  getSortPacksList(sortUpdate: string) {
     return instance.get<any, AxiosResponse<PacksResponseType>, any>(
-      `cards/pack?page=${page}&pageCount=${pageCount}&sortPacks=0updated`
+      `cards/pack?sortPacks=${sortUpdate}`
     );
   },
 
   addPack(name: string) {
-    //response игнорируем, заново запрос колод!!!
-
     const data: AddPackPayloadType = {
       cardsPack: {
         name,
