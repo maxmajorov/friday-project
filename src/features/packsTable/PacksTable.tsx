@@ -15,7 +15,7 @@ import { useAppDispatch, useAppSelector } from "../../bll/store";
 import { Delete } from "@mui/icons-material";
 import KeyboardTabIcon from "@mui/icons-material/KeyboardTab";
 import CreateIcon from "@mui/icons-material/Create";
-import ApiIcon from "@mui/icons-material/Api";
+import SchoolIcon from "@mui/icons-material/School";
 import {
   addPackTC,
   deletePackTC,
@@ -40,6 +40,7 @@ import style from "./PacksTable.module.css";
 import { appStatusSelect } from "../../bll/reducers/app-reducer";
 import { useDebounce } from "../../utils/useDebounce";
 import { PaginationSelect } from "./pagination/PaginationSelect";
+import { userIDSelector } from "../../bll/reducers/auth-reducer";
 
 interface Data {
   id: string;
@@ -146,6 +147,7 @@ export const PacksTable: React.FC = () => {
   const status = useAppSelector(appStatusSelect);
   const page = useAppSelector(pageSelect);
   const rowsPerPage = useAppSelector(pageCountSelect);
+  const userID = useAppSelector(userIDSelector);
 
   // ==== SEARCHING =====
 
@@ -251,7 +253,9 @@ export const PacksTable: React.FC = () => {
                         }
                         style={{ paddingLeft: "15px" }}
                       >
-                        {card.name.slice(0, 60)}
+                        {card.name.length > 15
+                          ? `${card.name.slice(0, 15)}...`
+                          : card.name}
                       </TableCell>
                       <TableCell>
                         <IconButton
@@ -289,23 +293,28 @@ export const PacksTable: React.FC = () => {
                             ?.textAlign
                         }
                       >
-                        {card.name}
+                        {card.user_name}
                       </TableCell>
+
                       <TableCell align="right">
+                        {userID === card.user_id ? (
+                          <>
+                            <IconButton
+                              disabled={status === "loading"}
+                              onClick={() => deletePackHandler(card._id)}
+                            >
+                              <Delete />
+                            </IconButton>
+                            <IconButton
+                              disabled={status === "loading"}
+                              onClick={() => updatePackHandler(card._id)}
+                            >
+                              <CreateIcon />
+                            </IconButton>
+                          </>
+                        ) : null}
                         <IconButton disabled={status === "loading"}>
-                          <ApiIcon />
-                        </IconButton>
-                        <IconButton
-                          disabled={status === "loading"}
-                          onClick={() => deletePackHandler(card._id)}
-                        >
-                          <Delete />
-                        </IconButton>
-                        <IconButton
-                          disabled={status === "loading"}
-                          onClick={() => updatePackHandler(card._id)}
-                        >
-                          <CreateIcon />
+                          <SchoolIcon />
                         </IconButton>
                       </TableCell>
                     </TableRow>

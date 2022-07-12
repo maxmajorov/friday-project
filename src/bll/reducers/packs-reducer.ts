@@ -9,6 +9,7 @@ const initialState = {
     {
       _id: "",
       user_id: "",
+      user_name: "",
       name: "",
       cardsCount: 0,
       created: "",
