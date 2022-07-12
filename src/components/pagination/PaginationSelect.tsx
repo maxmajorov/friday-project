@@ -44,7 +44,7 @@ export const PaginationSelect: React.FC<PaginationGroupType> = ({
           disabled={disable}
           count={
             totalCount && pageCount
-              ? Math.round(totalCount / pageCount)
+              ? Math.ceil(totalCount / pageCount)
               : totalCount
           }
           page={page}
