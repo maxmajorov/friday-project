@@ -200,141 +200,138 @@ export const PacksTable: React.FC = () => {
 
   return (
     <Box sx={{ width: "100%" }}>
-      <Paper>
-        <div className={style.search_group}>
-          <TextField
-            fullWidth
-            size={"small"}
-            placeholder="Search"
-            disabled={status === "loading"}
-            value={value}
-            onChange={onChangeHandler}
-            InputProps={{
-              type: "search",
-              startAdornment: (
-                <InputAdornment position="start">
-                  <SearchIcon />
-                </InputAdornment>
-              ),
-            }}
-          />
-          <Button
-            variant="contained"
-            disabled={status === "loading"}
-            className={style.search_btn}
-            style={{ width: "30%", marginLeft: "30px" }}
-            onClick={addNewPackCallback}
-          >
-            add new pack
-          </Button>
-        </div>
-        <TableContainer>
-          <Table
-            sx={{ minWidth: 750 }}
-            aria-labelledby="tableTitle"
-            size={"medium"}
-          >
-            <EnhancedTableHead />
-            <TableBody>
-              {packsSelector.length ? (
-                packsSelector.map((card, index) => {
-                  const labelId = `enhanced-table-checkbox-${index}`;
-
-                  return (
-                    <TableRow hover key={index}>
-                      <TableCell
-                        component="th"
-                        id={labelId}
-                        scope="row"
-                        padding="none"
-                        align={
-                          headCells.find((cell) => cell.id === "name")
-                            ?.textAlign
-                        }
-                        style={{ paddingLeft: "15px" }}
-                      >
-                        {card.name.length > 15
-                          ? `${card.name.slice(0, 15)}...`
-                          : card.name}
-                      </TableCell>
-                      <TableCell>
-                        <IconButton
-                          disabled={status === "loading"}
-                          onClick={() => {
-                            dispatch(setPackIdAC(card._id));
-                            navigate(PATH.CARDS_LIST);
-                          }}
-                        >
-                          <KeyboardTabIcon />
-                        </IconButton>
-                      </TableCell>
-                      <TableCell
-                        padding="normal"
-                        align={
-                          headCells.find((cell) => cell.id === "cards")
-                            ?.textAlign
-                        }
-                      >
-                        {card.cardsCount}
-                      </TableCell>
-                      <TableCell
-                        padding="normal"
-                        align={
-                          headCells.find((cell) => cell.id === "update")
-                            ?.textAlign
-                        }
-                      >
-                        {card.updated.slice(0, 10)}
-                      </TableCell>
-                      <TableCell
-                        padding="normal"
-                        align={
-                          headCells.find((cell) => cell.id === "create")
-                            ?.textAlign
-                        }
-                      >
-                        {card.user_name}
-                      </TableCell>
-
-                      <TableCell align="right">
-                        {userID === card.user_id ? (
-                          <>
-                            <IconButton
-                              disabled={status === "loading"}
-                              onClick={() => deletePackHandler(card._id)}
-                            >
-                              <Delete />
-                            </IconButton>
-                            <IconButton
-                              disabled={status === "loading"}
-                              onClick={() => updatePackHandler(card._id)}
-                            >
-                              <CreateIcon />
-                            </IconButton>
-                          </>
-                        ) : null}
-                        <IconButton disabled={status === "loading"}>
-                          <SchoolIcon />
-                        </IconButton>
-                      </TableCell>
-                    </TableRow>
-                  );
-                })
-              ) : (
-                <div>Packs not found...</div> //Стилизовать!!!
-              )}
-            </TableBody>
-          </Table>
-        </TableContainer>
-        <PaginationSelect
-          disable={status === "loading"}
-          cardsTotalCount={totalPacksCount}
-          pageCount={rowsPerPage}
-          page={page}
-          onChangePage={handleChangePage}
-          onChangeValue={handleChangeRowsPerPage}
+      <div className={style.search}>
+        <TextField
+          fullWidth
+          size={"small"}
+          placeholder="Search"
+          disabled={status === "loading"}
+          value={value}
+          onChange={onChangeHandler}
+          InputProps={{
+            type: "search",
+            startAdornment: (
+              <InputAdornment position="start">
+                <SearchIcon />
+              </InputAdornment>
+            ),
+          }}
         />
-      </Paper>
+        <Button
+          variant="contained"
+          disabled={status === "loading"}
+          className={style.search_btn}
+          style={{ width: "30%", marginLeft: "30px" }}
+          onClick={addNewPackCallback}
+        >
+          add new pack
+        </Button>
+      </div>
+      <TableContainer className={style.tableContainer}>
+        <Table
+          sx={{ minWidth: 750 }}
+          aria-labelledby="tableTitle"
+          size={"medium"}
+        >
+          <EnhancedTableHead />
+          <TableBody>
+            {packsSelector.length ? (
+              packsSelector.map((card, index) => {
+                const labelId = `enhanced-table-checkbox-${index}`;
+
+                return (
+                  <TableRow hover key={index}>
+                    <TableCell
+                      component="th"
+                      id={labelId}
+                      scope="row"
+                      padding="none"
+                      align={
+                        headCells.find((cell) => cell.id === "name")?.textAlign
+                      }
+                      style={{ paddingLeft: "15px" }}
+                    >
+                      {card.name.length > 15
+                        ? `${card.name.slice(0, 15)}...`
+                        : card.name}
+                    </TableCell>
+                    <TableCell>
+                      <IconButton
+                        disabled={status === "loading"}
+                        onClick={() => {
+                          dispatch(setPackIdAC(card._id));
+                          navigate(PATH.CARDS_LIST);
+                        }}
+                      >
+                        <KeyboardTabIcon />
+                      </IconButton>
+                    </TableCell>
+                    <TableCell
+                      padding="normal"
+                      align={
+                        headCells.find((cell) => cell.id === "cards")?.textAlign
+                      }
+                    >
+                      {card.cardsCount}
+                    </TableCell>
+                    <TableCell
+                      padding="normal"
+                      align={
+                        headCells.find((cell) => cell.id === "update")
+                          ?.textAlign
+                      }
+                    >
+                      {card.updated.slice(0, 10)}
+                    </TableCell>
+                    <TableCell
+                      padding="normal"
+                      align={
+                        headCells.find((cell) => cell.id === "create")
+                          ?.textAlign
+                      }
+                    >
+                      {card.user_name}
+                    </TableCell>
+
+                    <TableCell align="right">
+                      {userID === card.user_id ? (
+                        <>
+                          <IconButton
+                            disabled={status === "loading"}
+                            onClick={() => deletePackHandler(card._id)}
+                          >
+                            <Delete />
+                          </IconButton>
+                          <IconButton
+                            disabled={status === "loading"}
+                            onClick={() => updatePackHandler(card._id)}
+                          >
+                            <CreateIcon />
+                          </IconButton>
+                        </>
+                      ) : null}
+                      <IconButton disabled={status === "loading"}>
+                        <SchoolIcon />
+                      </IconButton>
+                    </TableCell>
+                  </TableRow>
+                );
+              })
+            ) : (
+              <div>Packs not found...</div> //Стилизовать!!!
+            )}
+          </TableBody>
+        </Table>
+      </TableContainer>
+
+      <PaginationSelect
+        disable={status === "loading"}
+        cardsTotalCount={totalPacksCount}
+        pageCount={rowsPerPage}
+        page={page}
+        onChangePage={handleChangePage}
+        onChangeValue={handleChangeRowsPerPage}
+      />
     </Box>
   );
 };
