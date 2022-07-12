@@ -1,83 +1,52 @@
-import * as React from "react";
+import React, { useState } from "react";
 import Box from "@mui/material/Box";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
-import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
 import TableSortLabel from "@mui/material/TableSortLabel";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
-import Paper from "@mui/material/Paper";
-import { visuallyHidden } from "@mui/utils";
 import ArrowBackOutlinedIcon from "@mui/icons-material/ArrowBackOutlined";
 import Button from "@mui/material/Button";
 import GradeIcon from "@mui/icons-material/Grade";
 import EditIcon from "@mui/icons-material/Edit";
 import style from "./CardsTable.module.css";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 import { PATH } from "../../components/common/routes/RoutesConstants";
-import { useLocation } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../bll/store";
-import { getCardsListTC } from "../../bll/reducers/cards-reducer";
+import {
+  cardsPageCountSelect,
+  cardsPageSelect,
+  cardsSelect,
+  getCardsListTC,
+  getSortCardsListTC,
+  setCardsPageAC,
+  setCardsPageCountAC,
+  totalCardsCountSelect,
+} from "../../bll/reducers/cards-reducer";
 import { IconButton, InputAdornment, TextField } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import LinearProgress from "@mui/material/LinearProgress";
 import { appStatusSelect } from "../../bll/reducers/app-reducer";
 import { packIdSelect } from "../../bll/reducers/packs-reducer";
 import { useDebounce } from "../../utils/useDebounce";
+import { PaginationSelect } from "../../components/pagination/PaginationSelect";
+import { isLoggedInSelector } from "../../bll/reducers/auth-reducer";
 
 interface Data {
   question: string;
   answer: string;
   lastUpdated: Date;
   grade: string;
-}
-
-function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
-  if (b[orderBy] < a[orderBy]) {
-    return -1;
-  }
-  if (b[orderBy] > a[orderBy]) {
-    return 1;
-  }
-  return 0;
-}
-
-type Order = "asc" | "desc";
-
-function getComparator<Key extends keyof any>(
-  order: Order,
-  orderBy: Key
-): (
-  a: { [key in Key]: number | string },
-  b: { [key in Key]: number | string }
-) => number {
-  return order === "desc"
-    ? (a, b) => descendingComparator(a, b, orderBy)
-    : (a, b) => -descendingComparator(a, b, orderBy);
-}
-
-function stableSort<T>(
-  array: readonly T[],
-  comparator: (a: any, b: any) => number
-) {
-  const stabilizedThis = array.map((el, index) => [el, index] as [T, number]);
-  stabilizedThis.sort((a, b) => {
-    const order = comparator(a[0], b[0]);
-    if (order !== 0) {
-      return order;
-    }
-    return a[1] - b[1];
-  });
-  return stabilizedThis.map((el) => el[0]);
+  edit: string;
 }
 
 interface HeadCell {
-  disablePadding: boolean;
   id: keyof Data;
+  disablePadding: boolean;
   label: string;
   textAlign: "left" | "center" | "right" | "justify" | "inherit" | undefined;
   sortable?: boolean;
@@ -100,7 +69,7 @@ const headCells: readonly HeadCell[] = [
     id: "lastUpdated",
     textAlign: "right",
     disablePadding: true,
-    label: "Last Updated",
+    label: "Last updated",
     sortable: true,
   },
   {
@@ -116,57 +85,6 @@ const headCells: readonly HeadCell[] = [
     label: "Edit",
   },
 ];
-
-interface EnhancedTableProps {
-  onRequestSort: (
-    event: React.MouseEvent<unknown>,
-    property: keyof Data
-  ) => void;
-  order: Order;
-  orderBy: string;
-}
-
-function EnhancedTableHead(props: EnhancedTableProps) {
-  const { order, orderBy, onRequestSort } = props;
-  const createSortHandler =
-    (property: keyof Data) => (event: React.MouseEvent<unknown>) => {
-      onRequestSort(event, property);
-    };
-
-  return (
-    <TableHead>
-      <TableRow>
-        {headCells.map((headCell) => (
-          <TableCell
-            key={headCell.id}
-            align={headCell.textAlign}
-            padding="normal"
-            sortDirection={orderBy === headCell.id ? order : false}
-          >
-            {headCell.sortable ? (
-              <TableSortLabel
-                active={orderBy === headCell.id}
-                direction={orderBy === headCell.id ? order : "asc"}
-                onClick={createSortHandler(headCell.id)}
-              >
-                {headCell.label}
-                {orderBy === headCell.id ? (
-                  <Box component="span" sx={visuallyHidden}>
-                    {order === "desc"
-                      ? "sorted descending"
-                      : "sorted ascending"}
-                  </Box>
-                ) : null}
-              </TableSortLabel>
-            ) : (
-              headCell.label
-            )}
-          </TableCell>
-        ))}
-      </TableRow>
-    </TableHead>
-  );
-}
 
 const EnhancedTableToolbar = () => {
   return (
@@ -188,20 +106,53 @@ const EnhancedTableToolbar = () => {
   );
 };
 
-export const CardsTable = () => {
-  const [value, setValue] = React.useState("");
-  const [order, setOrder] = React.useState<Order>("asc");
-  const [orderBy, setOrderBy] = React.useState<keyof Data>("lastUpdated");
-  const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
-
-  const navigate = useNavigate();
+const EnhancedTableHead: React.FC = () => {
+  const [updated, setUpdated] = useState<"0grade" | "1grade">("1grade");
 
   const dispatch = useAppDispatch();
-  const cardsSelector = useAppSelector((state) => state.cards.cards);
-  const cardsTotalCountSelector = useAppSelector(
-    (state) => state.cards.cardsTotalCount
+
+  const packID = useAppSelector(packIdSelect);
+  const page = useAppSelector(cardsPageSelect);
+  const rowsPerPage = useAppSelector(cardsPageCountSelect);
+
+  const sortByUpdateHandler = () => {
+    setUpdated(updated === "0grade" ? "1grade" : "0grade");
+    dispatch(getSortCardsListTC(page, rowsPerPage, packID, updated));
+  };
+
+  return (
+    <TableHead>
+      <TableRow>
+        {headCells.map((headCell) => (
+          <TableCell
+            key={headCell.id}
+            align={headCell.textAlign}
+            padding="normal"
+          >
+            {headCell.label}
+            <TableSortLabel
+              active={headCell.label === "Grade"}
+              direction={updated === "1grade" ? "asc" : "desc"}
+              onClick={sortByUpdateHandler}
+            ></TableSortLabel>
+          </TableCell>
+        ))}
+      </TableRow>
+    </TableHead>
   );
+};
+
+export const CardsTable = () => {
+  const [value, setValue] = React.useState("");
+
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
+
+  const isLoggedIn = useAppSelector(isLoggedInSelector);
+  const cardsSelector = useAppSelector(cardsSelect);
+  const cardsTotalCount = useAppSelector(totalCardsCountSelect);
+  const page = useAppSelector(cardsPageSelect);
+  const rowsPerPage = useAppSelector(cardsPageCountSelect);
   const packID = useAppSelector(packIdSelect);
   const status = useAppSelector(appStatusSelect);
 
@@ -219,40 +170,19 @@ export const CardsTable = () => {
 
   React.useEffect(() => {
     dispatch(getCardsListTC(packID));
-  }, [dispatch, packID]);
+  }, [dispatch, debouncedValue, packID, page, rowsPerPage]);
 
-  const handleRequestSort = (
-    event: React.MouseEvent<unknown>,
-    property: keyof Data
-  ) => {
-    const isAsc = orderBy === property && order === "asc";
-    setOrder(isAsc ? "desc" : "asc");
-    setOrderBy(property);
+  const handleChangePage = (newPage: number) => {
+    dispatch(setCardsPageAC(newPage));
   };
 
-  const handleChangePage = (event: unknown, newPage: number) => {
-    setPage(newPage);
+  const handleChangeRowsPerPage = (pageCount: number) => {
+    dispatch(setCardsPageCountAC(pageCount));
   };
 
-  const handleChangeRowsPerPage = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
-  };
-
-  const labelDisplayedRows = ({
-    from,
-    to,
-    count,
-  }: {
-    from: number;
-    to: number;
-    count: number;
-  }) => {
-    console.log("=======", from, to, count, cardsTotalCountSelector);
-    return `${page + 1} of ${Math.ceil(count / rowsPerPage)}`;
-  };
+  if (!isLoggedIn) {
+    return <Navigate to={PATH.LOGIN} />;
+  }
 
   return (
     <>
@@ -261,8 +191,12 @@ export const CardsTable = () => {
         <EnhancedTableToolbar />
         <div style={{ marginBottom: "20px" }}>
           <TextField
-            fullWidth={true}
+            fullWidth
             size={"small"}
+            placeholder="Search"
+            disabled={status === "loading"}
+            value={value}
+            onChange={onChangeHandler}
             InputProps={{
               type: "search",
               startAdornment: (
@@ -271,127 +205,112 @@ export const CardsTable = () => {
                 </InputAdornment>
               ),
             }}
-            onChange={onChangeHandler}
           />
         </div>
-        <Paper sx={{ width: "100%", mb: 5 }}>
-          <TableContainer className={style[`table-container`]}>
-            <Table
-              sx={{ minWidth: 750 }}
-              aria-labelledby="tableTitle"
-              size={"medium"}
-            >
-              <EnhancedTableHead
-                order={order}
-                orderBy={orderBy}
-                onRequestSort={handleRequestSort}
-              />
-              <TableBody>
-                {
-                  // stableSort(filteredData, getComparator(order, orderBy))
-                  //   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                  cardsSelector.length ? (
-                    cardsSelector.map((row, index) => {
-                      const labelId = `enhanced-table-checkbox-${index}`;
+        <TableContainer className={style.tableContainer}>
+          <Table
+            sx={{ minWidth: 750 }}
+            aria-labelledby="tableTitle"
+            size={"medium"}
+          >
+            <EnhancedTableHead />
+            <TableBody>
+              {cardsSelector.length ? (
+                cardsSelector.map((card, index) => {
+                  const labelId = `enhanced-table-checkbox-${index}`;
 
-                      return (
-                        <TableRow hover key={index}>
-                          <TableCell
-                            component="th"
-                            id={labelId}
-                            scope="row"
-                            padding="normal"
-                            align={
-                              headCells.find((cell) => cell.id === "question")
-                                ?.textAlign
-                            }
-                          >
-                            {row.question}
-                          </TableCell>
-                          <TableCell
-                            padding="normal"
-                            align={
-                              headCells.find((cell) => cell.id === "answer")
-                                ?.textAlign
-                            }
-                          >
-                            {row.answer}
-                          </TableCell>
-                          <TableCell
-                            padding="normal"
-                            align={
-                              headCells.find(
-                                (cell) => cell.id === "lastUpdated"
-                              )?.textAlign
-                            }
-                          >
-                            {row.updated.slice(0, 10)}
-                          </TableCell>
-                          <TableCell
-                            padding="normal"
-                            align={
-                              headCells.find((cell) => cell.id === "grade")
-                                ?.textAlign
-                            }
-                          >
-                            <GradeIcon
-                              style={{ color: "rgba(33, 38, 143, 1)" }}
-                              fontSize="small"
-                            />
-                            <GradeIcon fontSize="small" />
-                            <GradeIcon fontSize="small" />
-                            <GradeIcon fontSize="small" />
-                            <GradeIcon fontSize="small" />
-                          </TableCell>
-                          <TableCell
-                            padding="normal"
-                            align={
-                              headCells.find((cell) => cell.id === "grade")
-                                ?.textAlign
-                            }
-                          >
-                            <IconButton
-                              disabled={status === "loading"}
-                              onClick={() =>
-                                navigate(
-                                  PATH.CARD_INFO,
-
-                                  {
-                                    state: {
-                                      question: row.question,
-                                      answer: row.answer,
-                                    },
-                                  }
-                                )
-                              }
-                            >
-                              <EditIcon />
-                            </IconButton>
-                          </TableCell>
-                        </TableRow>
-                      );
-                    })
-                  ) : (
-                    <div>Cards not found...</div>
-                  )
-                }
-              </TableBody>
-            </Table>
-          </TableContainer>
-          <TablePagination
-            labelRowsPerPage={"Cards per page:"}
-            showFirstButton={true}
-            showLastButton={true}
-            rowsPerPageOptions={[5, 10, 25]}
-            component="div"
-            count={cardsTotalCountSelector}
-            rowsPerPage={rowsPerPage}
-            page={page}
-            onPageChange={handleChangePage}
-            onRowsPerPageChange={handleChangeRowsPerPage}
-            labelDisplayedRows={labelDisplayedRows}
-          />
-        </Paper>
+                  return (
+                    <TableRow hover key={index}>
+                      <TableCell
+                        component="th"
+                        id={labelId}
+                        scope="row"
+                        padding="normal"
+                        align={
+                          headCells.find((cell) => cell.id === "question")
+                            ?.textAlign
+                        }
+                        style={{ paddingLeft: "15px" }}
+                      >
+                        {card.question.length > 15
+                          ? `${card.question.slice(0, 15)}...`
+                          : card.question}
+                      </TableCell>
+                      <TableCell
+                        padding="normal"
+                        align={
+                          headCells.find((cell) => cell.id === "answer")
+                            ?.textAlign
+                        }
+                      >
+                        {card.answer.length > 15
+                          ? `${card.answer.slice(0, 15)}...`
+                          : card.answer}
+                      </TableCell>
+                      <TableCell
+                        padding="normal"
+                        align={
+                          headCells.find((cell) => cell.id === "lastUpdated")
+                            ?.textAlign
+                        }
+                      >
+                        {card.updated.slice(0, 10)}
+                      </TableCell>
+                      <TableCell
+                        padding="normal"
+                        align={
+                          headCells.find((cell) => cell.id === "grade")
+                            ?.textAlign
+                        }
+                      >
+                        <GradeIcon
+                          style={{ color: "rgba(33, 38, 143, 1)" }}
+                          fontSize="small"
+                        />
+                        <GradeIcon fontSize="small" />
+                        <GradeIcon fontSize="small" />
+                        <GradeIcon fontSize="small" />
+                        <GradeIcon fontSize="small" />
+                      </TableCell>
+                      <TableCell
+                        padding="normal"
+                        align={
+                          headCells.find((cell) => cell.id === "grade")
+                            ?.textAlign
+                        }
+                      >
+                        <IconButton
+                          disabled={status === "loading"}
+                          onClick={() =>
+                            navigate(PATH.CARD_INFO, {
+                              state: {
+                                question: card.question,
+                                answer: card.answer,
+                              },
+                            })
+                          }
+                        >
+                          <EditIcon />
+                        </IconButton>
+                      </TableCell>
+                    </TableRow>
+                  );
+                })
+              ) : (
+                <div>Cards not found...</div>
+              )}
+            </TableBody>
+          </Table>
+        </TableContainer>
+        <PaginationSelect
+          title={"Cards per page"}
+          disable={status === "loading"}
+          totalCount={cardsTotalCount}
+          pageCount={rowsPerPage}
+          page={page}
+          onChangePage={handleChangePage}
+          onChangeValue={handleChangeRowsPerPage}
+        />
       </Box>
     </>
   );

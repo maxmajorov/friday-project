@@ -4,11 +4,12 @@ import { Navigate } from "react-router-dom";
 import { PATH } from "../../components/common/routes/RoutesConstants";
 import Grid from "@mui/material/Grid";
 import LinearProgress from "@mui/material/LinearProgress";
-import { isLoggedInSelector } from "../../bll/reducers/auth-reducer";
+import {
+  isLoggedInSelector,
+  userIDSelector,
+} from "../../bll/reducers/auth-reducer";
 import { appStatusSelect } from "../../bll/reducers/app-reducer";
 import { Box, Button } from "@mui/material";
-import { PacksTable } from "./PacksTable";
-import style from "./PacksTableContainer.module.css";
 import { SuperDoubleRange } from "../../components/common/superDoubleRange/SuperDoubleRange";
 import {
   getPacksListTC,
@@ -17,7 +18,8 @@ import {
   pageCountSelect,
   pageSelect,
 } from "../../bll/reducers/packs-reducer";
-import { userIDSelect } from "../../bll/reducers/profile-reducer";
+import { PacksTable } from "./packsTable/PacksTable";
+import style from "./PacksTableContainer.module.css";
 
 export const PacksTableContainer: React.FC = () => {
   const [allPacks, setAllPacks] = useState(0);
@@ -27,7 +29,7 @@ export const PacksTableContainer: React.FC = () => {
   const status = useAppSelector(appStatusSelect);
   const page = useAppSelector(pageSelect);
   const rowsPerPage = useAppSelector(pageCountSelect);
-  const userID = useAppSelector(userIDSelect);
+  const userID = useAppSelector(userIDSelector);
 
   useEffect(() => {
     dispatch(getPacksListTC(page, rowsPerPage));

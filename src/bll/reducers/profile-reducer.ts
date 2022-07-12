@@ -86,7 +86,6 @@ export const updateUserAvatarTC =
 // ==== SELECTORS ====
 
 export const profileSelect = (state: AppRootStateType) => state.profile;
-export const userIDSelect = (state: AppRootStateType) => state.profile._id;
 
 // ==== TYPES ====
 

@@ -8,12 +8,6 @@ export const getCardsAPI = {
     );
   },
 
-  getSortCardsList(page: number, pageCount: number = 8) {
-    return instance.get<AxiosResponse<CardsResponseType>>(
-      `cards/card?page=${page}&pageCount=${pageCount}&sortCards=0grade`
-    );
-  },
-
   getGradedCardsList(
     page: number,
     pageCount: number = 8,
@@ -22,6 +16,17 @@ export const getCardsAPI = {
   ) {
     return instance.get<AxiosResponse<CardsResponseType>>(
       `cards/card?page=${page}&pageCount=${pageCount}&min=${min}&max=${max}`
+    );
+  },
+
+  getSortCardsList(
+    page: number,
+    pageCount: number,
+    packID: string,
+    sortUpdate: string
+  ) {
+    return instance.get<any, AxiosResponse<CardsResponseType>, any>(
+      `cards/card?page=${page}&pageCount=${pageCount}&cardsPack_id=${packID}&sortCards=${sortUpdate}`
     );
   },
 

@@ -2,7 +2,6 @@ import React, { ChangeEvent, useEffect, useState } from "react";
 import TableBody from "@mui/material/TableBody";
 import IconButton from "@mui/material/IconButton";
 import InputAdornment from "@mui/material/InputAdornment";
-import Paper from "@mui/material/Paper";
 import Table from "@mui/material/Table";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
@@ -11,7 +10,7 @@ import TextField from "@mui/material/TextField";
 import TableCell from "@mui/material/TableCell";
 import TableSortLabel from "@mui/material/TableSortLabel";
 import Box from "@mui/material/Box";
-import { useAppDispatch, useAppSelector } from "../../bll/store";
+import { useAppDispatch, useAppSelector } from "../../../bll/store";
 import { Delete } from "@mui/icons-material";
 import KeyboardTabIcon from "@mui/icons-material/KeyboardTab";
 import CreateIcon from "@mui/icons-material/Create";
@@ -21,7 +20,6 @@ import {
   deletePackTC,
   getSearchPacksListTC,
   getSortPacksListTC,
-  packIdSelect,
   packsSelect,
   pageCountSelect,
   pageSelect,
@@ -30,17 +28,16 @@ import {
   setPageCountAC,
   totalPacksCountSelect,
   updatePackNameTC,
-} from "../../bll/reducers/packs-reducer";
-import { PATH } from "../../components/common/routes/RoutesConstants";
+} from "../../../bll/reducers/packs-reducer";
+import { PATH } from "../../../components/common/routes/RoutesConstants";
 import { useNavigate } from "react-router-dom";
 import SearchIcon from "@mui/icons-material/Search";
-import { userIDSelect } from "../../bll/reducers/profile-reducer";
 import Button from "@mui/material/Button";
 import style from "./PacksTable.module.css";
-import { appStatusSelect } from "../../bll/reducers/app-reducer";
-import { useDebounce } from "../../utils/useDebounce";
-import { PaginationSelect } from "./pagination/PaginationSelect";
-import { userIDSelector } from "../../bll/reducers/auth-reducer";
+import { appStatusSelect } from "../../../bll/reducers/app-reducer";
+import { useDebounce } from "../../../utils/useDebounce";
+import { userIDSelector } from "../../../bll/reducers/auth-reducer";
+import { PaginationSelect } from "../../../components/pagination/PaginationSelect";
 
 interface Data {
   id: string;
@@ -51,6 +48,7 @@ interface Data {
   createdBy: string;
   actions: string;
   label: string;
+  arrow: string;
 }
 
 interface HeadCell {
@@ -323,10 +321,10 @@ export const PacksTable: React.FC = () => {
           </TableBody>
         </Table>
       </TableContainer>
-
       <PaginationSelect
+        title={"Packs per page"}
         disable={status === "loading"}
-        cardsTotalCount={totalPacksCount}
+        totalCount={totalPacksCount}
         pageCount={rowsPerPage}
         page={page}
         onChangePage={handleChangePage}

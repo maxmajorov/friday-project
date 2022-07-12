@@ -26,6 +26,8 @@ const initialState = {
       __v: 0,
     },
   ],
+  page: 1,
+  pageCount: 5,
   cardsTotalCount: 0,
 };
 
@@ -42,6 +44,20 @@ export const cardsReducer = (
       };
     }
 
+    case "CARDS/set-cards-page": {
+      return {
+        ...state,
+        page: action.page,
+      };
+    }
+
+    case "CARDS/set-cards-countPage": {
+      return {
+        ...state,
+        pageCount: action.pageCount,
+      };
+    }
+
     default:
       return state;
   }
@@ -51,7 +67,12 @@ export const cardsReducer = (
 
 export const getCardsAC = (data: CardsResponseType) =>
   ({ type: "CARDS/get-one-page-cards", data } as const);
-//
+
+export const setCardsPageAC = (page: number) =>
+  ({ type: "CARDS/set-cards-page", page } as const);
+
+export const setCardsPageCountAC = (pageCount: number) =>
+  ({ type: "CARDS/set-cards-countPage", pageCount } as const);
 
 // ==== THUNKS =====
 
@@ -61,9 +82,7 @@ export const getCardsListTC =
     try {
       dispatch(appSetStatusAC("loading"));
       const response = await getCardsAPI.getCardsList(cardsPackID);
-      if (response.status === 200) {
-        dispatch(getCardsAC(response.data));
-      }
+      dispatch(getCardsAC(response.data));
     } catch (e) {
       const err = e as Error | AxiosError<{ error: string }>;
       handleNetworkError(dispatch, err);
@@ -72,37 +91,24 @@ export const getCardsListTC =
     }
   };
 
-export const getSortPacksListTC =
-  (page: number, pageCount: number): AppThunk =>
+export const getSortCardsListTC =
+  (
+    page: number,
+    pageCount: number,
+    packID: string,
+    sortUpdate: string
+  ): AppThunk =>
   async (dispatch) => {
     try {
       dispatch(appSetStatusAC("loading"));
-      const response = await getCardsAPI.getSortCardsList(page, pageCount);
-      if (response.status === 200) {
-        dispatch(getCardsAC(response.data.data));
-      }
-    } catch (e) {
-      const err = e as Error | AxiosError<{ error: string }>;
-      handleNetworkError(dispatch, err);
-    } finally {
-      dispatch(appSetStatusAC("idle"));
-    }
-  };
-
-export const getRangeredPacksListTC =
-  (page: number, pageCount: number, min: number, max: number): AppThunk =>
-  async (dispatch) => {
-    try {
-      dispatch(appSetStatusAC("loading"));
-      const response = await getCardsAPI.getGradedCardsList(
+      const response = await getCardsAPI.getSortCardsList(
         page,
         pageCount,
-        min,
-        max
+        packID,
+        sortUpdate
       );
-      if (response.status === 200) {
-        dispatch(getCardsAC(response.data.data));
-      }
+
+      dispatch(getCardsAC(response.data));
     } catch (e) {
       const err = e as Error | AxiosError<{ error: string }>;
       handleNetworkError(dispatch, err);
@@ -128,9 +134,8 @@ export const addCardTC =
         answer,
         cardsPack_id
       );
-      if (response.status === 200) {
-        dispatch(getCardsListTC(cardsPack_id));
-      }
+
+      dispatch(getCardsListTC(cardsPack_id));
     } catch (e) {
       const err = e as Error | AxiosError<{ error: string }>;
       handleNetworkError(dispatch, err);
@@ -151,9 +156,8 @@ export const deleteCardTC =
     try {
       dispatch(appSetStatusAC("loading"));
       const response = await getCardsAPI.deleteCard(cardID);
-      if (response.status === 200) {
-        dispatch(getCardsListTC(cardsPackID));
-      }
+
+      dispatch(getCardsListTC(cardsPackID));
     } catch (e) {
       const err = e as Error | AxiosError<{ error: string }>;
       handleNetworkError(dispatch, err);
@@ -180,9 +184,8 @@ export const updateCardTC =
         newQuestion,
         newAnswer
       );
-      if (response.status === 200) {
-        dispatch(getCardsListTC(cardsPackID));
-      }
+
+      dispatch(getCardsListTC(cardsPackID));
     } catch (e) {
       const err = e as Error | AxiosError<{ error: string }>;
       handleNetworkError(dispatch, err);
@@ -194,12 +197,14 @@ export const updateCardTC =
 // ==== SELECTORS ====
 
 export const cardsSelect = (state: AppRootStateType) => state.cards.cards;
+export const totalCardsCountSelect = (state: AppRootStateType) =>
+  state.cards.cardsTotalCount;
+export const cardsPageSelect = (state: AppRootStateType) => state.cards.page;
+export const cardsPageCountSelect = (state: AppRootStateType) =>
+  state.cards.pageCount;
 
 // ==== TYPES ====
-export type InitialStateType = {
-  cards: Array<CardType>;
-  cardsTotalCount: number;
-};
+export type InitialStateType = typeof initialState;
 export type RequestStatusType = "idle" | "loading" | "succeeded" | "failed";
 
 export type CardListType = Array<CardType> & {
@@ -207,5 +212,10 @@ export type CardListType = Array<CardType> & {
 };
 
 export type GetCardsType = ReturnType<typeof getCardsAC>;
+export type SetCardsPageType = ReturnType<typeof setCardsPageAC>;
+export type SetCardsPageCountType = ReturnType<typeof setCardsPageCountAC>;
 
-export type CardsActionsTypes = GetCardsType;
+export type CardsActionsTypes =
+  | GetCardsType
+  | SetCardsPageType
+  | SetCardsPageCountType;

@@ -6,7 +6,8 @@ import Select, { SelectChangeEvent } from "@mui/material/Select";
 import style from "./PaginationSelect.module.css";
 
 type PaginationGroupType = {
-  cardsTotalCount?: number;
+  title: string;
+  totalCount?: number;
   pageCount?: number;
   page?: number;
   disable?: boolean;
@@ -14,16 +15,15 @@ type PaginationGroupType = {
   onChangeValue: (value: number) => void;
 };
 
-export const PaginationSelect = (props: PaginationGroupType) => {
-  const {
-    cardsTotalCount,
-    pageCount,
-    page,
-    disable,
-    onChangeValue,
-    onChangePage,
-  } = props;
-
+export const PaginationSelect: React.FC<PaginationGroupType> = ({
+  title,
+  totalCount,
+  pageCount,
+  page,
+  disable,
+  onChangeValue,
+  onChangePage,
+}) => {
   const changePageCountHandler = (event: SelectChangeEvent) => {
     if (pageCount && +event.target.value !== pageCount) {
       onChangeValue(+event.target.value);
@@ -43,9 +43,9 @@ export const PaginationSelect = (props: PaginationGroupType) => {
         <Pagination
           disabled={disable}
           count={
-            cardsTotalCount && pageCount
-              ? Math.round(cardsTotalCount / pageCount)
-              : cardsTotalCount
+            totalCount && pageCount
+              ? Math.round(totalCount / pageCount)
+              : totalCount
           }
           page={page}
           shape="rounded"
@@ -53,7 +53,7 @@ export const PaginationSelect = (props: PaginationGroupType) => {
         />
       </Stack>
       <div className={style.select}>
-        <span>Packs per page: </span>
+        <span>{title}: </span>
         <Select
           disabled={disable}
           size="small"
