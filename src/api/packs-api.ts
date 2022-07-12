@@ -31,9 +31,9 @@ export const getPacksAPI = {
     );
   },
 
-  getSortPacksList(sortUpdate: string) {
+  getSortPacksList(page: number, pageCount: number, sortUpdate: string) {
     return instance.get<any, AxiosResponse<PacksResponseType>, any>(
-      `cards/pack?sortPacks=${sortUpdate}`
+      `cards/pack?page=${page}&pageCount=${pageCount}&sortPacks=${sortUpdate}`
     );
   },
 

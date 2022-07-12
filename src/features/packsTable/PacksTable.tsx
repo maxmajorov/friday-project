@@ -13,6 +13,7 @@ import TableSortLabel from "@mui/material/TableSortLabel";
 import Box from "@mui/material/Box";
 import { useAppDispatch, useAppSelector } from "../../bll/store";
 import { Delete } from "@mui/icons-material";
+import KeyboardTabIcon from "@mui/icons-material/KeyboardTab";
 import CreateIcon from "@mui/icons-material/Create";
 import ApiIcon from "@mui/icons-material/Api";
 import {
@@ -20,9 +21,11 @@ import {
   deletePackTC,
   getSearchPacksListTC,
   getSortPacksListTC,
+  packIdSelect,
   packsSelect,
   pageCountSelect,
   pageSelect,
+  setPackIdAC,
   setPageAC,
   setPageCountAC,
   totalPacksCountSelect,
@@ -65,38 +68,48 @@ const headCells: readonly HeadCell[] = [
     label: "Name",
   },
   {
-    id: "cards",
+    id: "arrow",
     textAlign: "left",
+    disablePadding: true,
+    label: "",
+  },
+  {
+    id: "cards",
+    textAlign: "center",
     disablePadding: false,
     label: "Cards",
   },
   {
     id: "update",
-    textAlign: "left",
+    textAlign: "center",
     disablePadding: false,
     label: "Last updated",
   },
   {
     id: "createdBy",
-    textAlign: "left",
+    textAlign: "center",
     disablePadding: false,
     label: "Created by",
   },
   {
     id: "actions",
-    textAlign: "left",
+    textAlign: "center",
     disablePadding: false,
     label: "Actions",
   },
 ];
 
 const EnhancedTableHead: React.FC = () => {
-  const [updated, setUpdated] = useState<"0updated" | "1updated">("0updated");
+  const [updated, setUpdated] = useState<"0updated" | "1updated">("1updated");
+
   const dispatch = useAppDispatch();
+
+  const page = useAppSelector(pageSelect);
+  const rowsPerPage = useAppSelector(pageCountSelect);
 
   const sortByUpdateHandler = () => {
     setUpdated(updated === "0updated" ? "1updated" : "0updated");
-    dispatch(getSortPacksListTC(updated));
+    dispatch(getSortPacksListTC(page, rowsPerPage, updated));
   };
 
   return (
@@ -130,7 +143,6 @@ export const PacksTable: React.FC = () => {
 
   const totalPacksCount = useAppSelector(totalPacksCountSelect);
   const packsSelector = useAppSelector(packsSelect);
-  const userID = useAppSelector(userIDSelect);
   const status = useAppSelector(appStatusSelect);
   const page = useAppSelector(pageSelect);
   const rowsPerPage = useAppSelector(pageCountSelect);
@@ -237,17 +249,20 @@ export const PacksTable: React.FC = () => {
                           headCells.find((cell) => cell.id === "name")
                             ?.textAlign
                         }
-                        onClick={() =>
-                          navigate(PATH.CARDS_LIST, {
-                            state: {
-                              pack_id: card._id,
-                              cardsCount: card.cardsCount,
-                            },
-                          })
-                        }
-                        style={{ paddingLeft: "30px" }}
+                        style={{ paddingLeft: "15px" }}
                       >
-                        {card.name.slice(0, 70)}
+                        {card.name.slice(0, 60)}
+                      </TableCell>
+                      <TableCell>
+                        <IconButton
+                          disabled={status === "loading"}
+                          onClick={() => {
+                            dispatch(setPackIdAC(card._id));
+                            navigate(PATH.CARDS_LIST);
+                          }}
+                        >
+                          <KeyboardTabIcon />
+                        </IconButton>
                       </TableCell>
                       <TableCell
                         padding="normal"
