@@ -8,7 +8,7 @@ export const getPacksAPI = {
     );
   },
 
-  getPacksList(page: number, pageCount: number = 8) {
+  getPacksList(page: number, pageCount: number) {
     return instance.get<any, AxiosResponse<PacksResponseType>, any>(
       `cards/pack?page=${page}&pageCount=${pageCount}`
     );
@@ -22,9 +22,9 @@ export const getPacksAPI = {
 
   getRangeredPacksList(
     page: number,
-    pageCount: number = 8,
+    pageCount: number,
     min: number = 0,
-    max: number = 110
+    max: number
   ) {
     return instance.get<any, AxiosResponse<PacksResponseType>, any>(
       `cards/pack?page=${page}&pageCount=${pageCount}&min=${min}&max=${max}`

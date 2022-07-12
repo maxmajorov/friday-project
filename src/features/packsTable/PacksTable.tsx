@@ -15,16 +15,16 @@ import { useAppDispatch, useAppSelector } from "../../bll/store";
 import { Delete } from "@mui/icons-material";
 import CreateIcon from "@mui/icons-material/Create";
 import ApiIcon from "@mui/icons-material/Api";
-import { visuallyHidden } from "@mui/utils";
-import TablePagination from "@mui/material/TablePagination";
 import {
   addPackTC,
   deletePackTC,
-  getPacksListTC,
   getSearchPacksListTC,
   getSortPacksListTC,
-  getUserPacksListTC,
   packsSelect,
+  pageCountSelect,
+  pageSelect,
+  setPageAC,
+  setPageCountAC,
   totalPacksCountSelect,
   updatePackNameTC,
 } from "../../bll/reducers/packs-reducer";
@@ -32,11 +32,11 @@ import { PATH } from "../../components/common/routes/RoutesConstants";
 import { useNavigate } from "react-router-dom";
 import SearchIcon from "@mui/icons-material/Search";
 import { userIDSelect } from "../../bll/reducers/profile-reducer";
-import { ListType } from "../../utils/enum";
 import Button from "@mui/material/Button";
 import style from "./PacksTable.module.css";
 import { appStatusSelect } from "../../bll/reducers/app-reducer";
 import { useDebounce } from "../../utils/useDebounce";
+import { PaginationSelect } from "./pagination/PaginationSelect";
 
 interface Data {
   id: string;
@@ -48,45 +48,6 @@ interface Data {
   actions: string;
   label: string;
 }
-
-// function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
-//   if (b[orderBy] < a[orderBy]) {
-//     return -1;
-//   }
-//   if (b[orderBy] > a[orderBy]) {
-//     return 1;
-//   }
-//   return 0;
-// }
-
-// type Order = "asc" | "desc";
-
-// function getComparator<Key extends keyof any>(
-//   order: Order,
-//   orderBy: Key
-// ): (
-//   a: { [key in Key]: number | string },
-//   b: { [key in Key]: number | string }
-// ) => number {
-//   return order === "desc"
-//     ? (a, b) => descendingComparator(a, b, orderBy)
-//     : (a, b) => -descendingComparator(a, b, orderBy);
-// }
-
-// function stableSort<T>(
-//   array: readonly T[],
-//   comparator: (a: any, b: any) => number
-// ) {
-//   const stabilizedThis = array.map((el, index) => [el, index] as [T, number]);
-//   stabilizedThis.sort((a, b) => {
-//     const order = comparator(a[0], b[0]);
-//     if (order !== 0) {
-//       return order;
-//     }
-//     return a[1] - b[1];
-//   });
-//   return stabilizedThis.map((el) => el[0]);
-// }
 
 interface HeadCell {
   id: keyof Data;
@@ -129,24 +90,7 @@ const headCells: readonly HeadCell[] = [
   },
 ];
 
-// interface EnhancedTableProps {
-//   onRequestSort: (
-//     event: React.MouseEvent<unknown>,
-//     property: keyof Data
-//   ) => void;
-//   order: Order;
-//   orderBy: string;
-// }
-
-type EnhancedTableHeadPropsType = {
-  page: number;
-  rowsPerPage: number;
-};
-
-const EnhancedTableHead: React.FC<EnhancedTableHeadPropsType> = ({
-  page,
-  rowsPerPage,
-}) => {
+const EnhancedTableHead: React.FC = () => {
   const [updated, setUpdated] = useState<"0updated" | "1updated">("0updated");
   const dispatch = useAppDispatch();
 
@@ -178,20 +122,8 @@ const EnhancedTableHead: React.FC<EnhancedTableHeadPropsType> = ({
   );
 };
 
-type PacksTableType = {
-  rowsPerPage: number;
-  setRowsPerPage: (value: number) => void;
-  listType: ListType;
-};
-
-export const PacksTable = ({
-  rowsPerPage,
-  setRowsPerPage,
-  listType,
-}: PacksTableType) => {
+export const PacksTable: React.FC = () => {
   const [value, setValue] = useState("");
-
-  const [page, setPage] = React.useState(0);
 
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
@@ -200,11 +132,12 @@ export const PacksTable = ({
   const packsSelector = useAppSelector(packsSelect);
   const userID = useAppSelector(userIDSelect);
   const status = useAppSelector(appStatusSelect);
+  const page = useAppSelector(pageSelect);
+  const rowsPerPage = useAppSelector(pageCountSelect);
 
   // ==== SEARCHING =====
 
   const debouncedValue = useDebounce<string>(value, 1500);
-  console.log(debouncedValue);
 
   const onChangeHandler = (
     event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -212,52 +145,21 @@ export const PacksTable = ({
     setValue(event.target.value);
   };
 
-  const getMyPacks = () => {
-    dispatch(getUserPacksListTC(userID));
-  };
-
-  const getAllPacks = () => {
-    dispatch(getPacksListTC(page, rowsPerPage));
-  };
-
   useEffect(() => {
     if (debouncedValue.length) {
       dispatch(getSearchPacksListTC(debouncedValue));
-    } else {
-      if (listType === ListType.My) {
-        getMyPacks();
-      } else {
-        getAllPacks();
-      }
+      dispatch(setPageAC(1));
     }
-  }, [dispatch, debouncedValue, page, rowsPerPage, listType]);
+  }, [dispatch, debouncedValue, page, rowsPerPage]);
 
   //=================================
 
-  const handleChangePage = (
-    event: React.MouseEvent<HTMLButtonElement> | null,
-    newPage: number
-  ) => {
-    setPage(newPage);
+  const handleChangePage = (newPage: number) => {
+    dispatch(setPageAC(newPage));
   };
 
-  const handleChangeRowsPerPage = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
-  };
-
-  const labelDisplayedRows = ({
-    from,
-    to,
-    count,
-  }: {
-    from: number;
-    to: number;
-    count: number;
-  }) => {
-    return `${page + 1} of ${Math.ceil(count / rowsPerPage)}`;
+  const handleChangeRowsPerPage = (pageCount: number) => {
+    dispatch(setPageCountAC(pageCount));
   };
 
   // ==== ACTIONS ====
@@ -265,7 +167,7 @@ export const PacksTable = ({
   // ==== ADD NEW PACK ====
 
   const addNewPackCallback = () => {
-    dispatch(addPackTC(page, rowsPerPage, "Training card_2"));
+    dispatch(addPackTC(page, rowsPerPage, "Training card_new"));
   };
 
   // ==== DELETE PACK ====
@@ -318,7 +220,7 @@ export const PacksTable = ({
             aria-labelledby="tableTitle"
             size={"medium"}
           >
-            <EnhancedTableHead page={page} rowsPerPage={rowsPerPage} />
+            <EnhancedTableHead />
             <TableBody>
               {packsSelector.length ? (
                 packsSelector.map((card, index) => {
@@ -375,13 +277,19 @@ export const PacksTable = ({
                         {card.name}
                       </TableCell>
                       <TableCell align="right">
-                        <IconButton>
+                        <IconButton disabled={status === "loading"}>
                           <ApiIcon />
                         </IconButton>
-                        <IconButton onClick={() => deletePackHandler(card._id)}>
+                        <IconButton
+                          disabled={status === "loading"}
+                          onClick={() => deletePackHandler(card._id)}
+                        >
                           <Delete />
                         </IconButton>
-                        <IconButton onClick={() => updatePackHandler(card._id)}>
+                        <IconButton
+                          disabled={status === "loading"}
+                          onClick={() => updatePackHandler(card._id)}
+                        >
                           <CreateIcon />
                         </IconButton>
                       </TableCell>
@@ -389,23 +297,18 @@ export const PacksTable = ({
                   );
                 })
               ) : (
-                <div>Now packs found...</div> //Стилизовать!!!
+                <div>Packs not found...</div> //Стилизовать!!!
               )}
             </TableBody>
           </Table>
         </TableContainer>
-        <TablePagination
-          labelRowsPerPage={"Packs per page:"}
-          showFirstButton={true}
-          showLastButton={true}
-          rowsPerPageOptions={[5, 10, 25]}
-          component="div"
-          rowsPerPage={rowsPerPage}
-          count={totalPacksCount}
+        <PaginationSelect
+          disable={status === "loading"}
+          cardsTotalCount={totalPacksCount}
+          pageCount={rowsPerPage}
           page={page}
-          onPageChange={handleChangePage}
-          onRowsPerPageChange={handleChangeRowsPerPage}
-          labelDisplayedRows={labelDisplayedRows}
+          onChangePage={handleChangePage}
+          onChangeValue={handleChangeRowsPerPage}
         />
       </Paper>
     </Box>

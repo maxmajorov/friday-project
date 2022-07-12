@@ -3,7 +3,6 @@ import { AppRootStateType, AppThunk } from "../store";
 import { getPacksAPI, PacksResponseType } from "../../api/packs-api";
 import { appSetStatusAC } from "./app-reducer";
 import { handleNetworkError } from "../../utils/errorUtils";
-import { StringLiteralType } from "typescript";
 
 const initialState = {
   packsCards: [
@@ -16,6 +15,8 @@ const initialState = {
       updated: "",
     },
   ],
+  page: 1,
+  pageCount: 5,
   cardPacksTotalCount: 0,
 };
 
@@ -32,6 +33,20 @@ export const packsReducer = (
       };
     }
 
+    case "PACKS/set-page": {
+      return {
+        ...state,
+        page: action.page,
+      };
+    }
+
+    case "PACKS/set-countPage": {
+      return {
+        ...state,
+        pageCount: action.pageCount,
+      };
+    }
+
     default:
       return state;
   }
@@ -41,6 +56,12 @@ export const packsReducer = (
 
 export const getPacksCardsAC = (data: PacksResponseType) =>
   ({ type: "PACKS/get-one-page-packs", data } as const);
+
+export const setPageAC = (page: number) =>
+  ({ type: "PACKS/set-page", page } as const);
+
+export const setPageCountAC = (pageCount: number) =>
+  ({ type: "PACKS/set-countPage", pageCount } as const);
 
 // ==== THUNKS =====
 
@@ -184,11 +205,19 @@ export const updatePackNameTC =
 export const packsSelect = (state: AppRootStateType) => state.packs.packsCards;
 export const totalPacksCountSelect = (state: AppRootStateType) =>
   state.packs.cardPacksTotalCount;
+export const pageSelect = (state: AppRootStateType) => state.packs.page;
+export const pageCountSelect = (state: AppRootStateType) =>
+  state.packs.pageCount;
 
 // ==== TYPES ====
 export type InitialStateType = typeof initialState;
 export type RequestStatusType = "idle" | "loading" | "succeeded" | "failed";
 
 export type GetPacksCardsType = ReturnType<typeof getPacksCardsAC>;
+export type SetPageType = ReturnType<typeof setPageAC>;
+export type SetPageCountType = ReturnType<typeof setPageCountAC>;
 
-export type PacksActionsTypes = GetPacksCardsType;
+export type PacksActionsTypes =
+  | GetPacksCardsType
+  | SetPageType
+  | SetPageCountType;
