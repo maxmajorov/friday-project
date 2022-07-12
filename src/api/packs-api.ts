@@ -2,9 +2,9 @@ import { AxiosResponse } from "axios";
 import { instance } from "./api-instance";
 
 export const getPacksAPI = {
-  getUserPacksList(userID: string) {
+  getUserPacksList(page: number, pageCount: number, userID: string) {
     return instance.get<any, AxiosResponse<PacksResponseType>, any>(
-      `cards/pack?user_id=${userID}`
+      `cards/pack?page=${page}&pageCount=${pageCount}&user_id=${userID}`
     );
   },
 

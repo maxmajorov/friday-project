@@ -92,11 +92,15 @@ export const getPacksListTC =
   };
 
 export const getUserPacksListTC =
-  (userID: string): AppThunk =>
+  (page: number, pageCount: number, userID: string): AppThunk =>
   async (dispatch) => {
     try {
       dispatch(appSetStatusAC("loading"));
-      const response = await getPacksAPI.getUserPacksList(userID);
+      const response = await getPacksAPI.getUserPacksList(
+        page,
+        pageCount,
+        userID
+      );
 
       dispatch(getPacksCardsAC(response.data));
     } catch (e) {

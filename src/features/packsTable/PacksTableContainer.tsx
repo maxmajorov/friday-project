@@ -38,7 +38,7 @@ export const PacksTableContainer: React.FC = () => {
   };
 
   const getMyListHandler = () => {
-    dispatch(getUserPacksListTC(userID));
+    dispatch(getUserPacksListTC(page, rowsPerPage, userID));
   };
 
   const getAllListHandler = () => {
