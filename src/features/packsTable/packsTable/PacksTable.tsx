@@ -1,12 +1,10 @@
 import React, { ChangeEvent, useEffect, useState } from "react";
 import TableBody from "@mui/material/TableBody";
 import IconButton from "@mui/material/IconButton";
-import InputAdornment from "@mui/material/InputAdornment";
 import Table from "@mui/material/Table";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
-import TextField from "@mui/material/TextField";
 import TableCell from "@mui/material/TableCell";
 import TableSortLabel from "@mui/material/TableSortLabel";
 import Box from "@mui/material/Box";
@@ -31,13 +29,12 @@ import {
 } from "../../../bll/reducers/packs-reducer";
 import { PATH } from "../../../components/common/routes/RoutesConstants";
 import { useNavigate } from "react-router-dom";
-import SearchIcon from "@mui/icons-material/Search";
-import Button from "@mui/material/Button";
-import style from "./PacksTable.module.css";
 import { appStatusSelect } from "../../../bll/reducers/app-reducer";
 import { useDebounce } from "../../../utils/useDebounce";
 import { userIDSelector } from "../../../bll/reducers/auth-reducer";
 import { PaginationSelect } from "../../../components/pagination/PaginationSelect";
+import { SearchForm } from "../../../components/searchForm/SearchForm";
+import style from "./PacksTable.module.css";
 
 interface Data {
   id: string;
@@ -178,7 +175,7 @@ export const PacksTable: React.FC = () => {
 
   // ==== ADD NEW PACK ====
 
-  const addNewPackCallback = () => {
+  const addNewPackHandler = () => {
     dispatch(addPackTC(page, rowsPerPage, "Training card_new"));
   };
 
@@ -198,33 +195,13 @@ export const PacksTable: React.FC = () => {
 
   return (
     <Box sx={{ width: "100%" }}>
-      <div className={style.search}>
-        <TextField
-          fullWidth
-          size={"small"}
-          placeholder="Search"
-          disabled={status === "loading"}
-          value={value}
-          onChange={onChangeHandler}
-          InputProps={{
-            type: "search",
-            startAdornment: (
-              <InputAdornment position="start">
-                <SearchIcon />
-              </InputAdornment>
-            ),
-          }}
-        />
-        <Button
-          variant="contained"
-          disabled={status === "loading"}
-          className={style.search_btn}
-          style={{ width: "30%", marginLeft: "30px" }}
-          onClick={addNewPackCallback}
-        >
-          add new pack
-        </Button>
-      </div>
+      <SearchForm
+        title={"add new pack"}
+        status={status}
+        value={value}
+        onChangeHandler={onChangeHandler}
+        addNewItemHandler={addNewPackHandler}
+      />
       <TableContainer className={style.tableContainer}>
         <Table
           sx={{ minWidth: 750 }}

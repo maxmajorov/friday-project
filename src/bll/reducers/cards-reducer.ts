@@ -148,16 +148,15 @@ export const deleteCardTC =
   (
     page: number,
     pageCount: number,
-    cardsPackID: string,
-    cardID: string,
-    cardsCount: number
+    // cardsPackID: string,
+    cardID: string
   ): AppThunk =>
   async (dispatch) => {
     try {
       dispatch(appSetStatusAC("loading"));
       const response = await getCardsAPI.deleteCard(cardID);
 
-      dispatch(getCardsListTC(cardsPackID));
+      dispatch(getCardsListTC(cardID));
     } catch (e) {
       const err = e as Error | AxiosError<{ error: string }>;
       handleNetworkError(dispatch, err);

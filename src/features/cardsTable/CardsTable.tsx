@@ -21,20 +21,22 @@ import {
   cardsPageCountSelect,
   cardsPageSelect,
   cardsSelect,
+  deleteCardTC,
   getCardsListTC,
   getSortCardsListTC,
   setCardsPageAC,
   setCardsPageCountAC,
   totalCardsCountSelect,
 } from "../../bll/reducers/cards-reducer";
-import { IconButton, InputAdornment, TextField } from "@mui/material";
-import SearchIcon from "@mui/icons-material/Search";
+import { IconButton } from "@mui/material";
 import LinearProgress from "@mui/material/LinearProgress";
 import { appStatusSelect } from "../../bll/reducers/app-reducer";
 import { packIdSelect } from "../../bll/reducers/packs-reducer";
 import { useDebounce } from "../../utils/useDebounce";
 import { PaginationSelect } from "../../components/pagination/PaginationSelect";
 import { isLoggedInSelector } from "../../bll/reducers/auth-reducer";
+import { Delete } from "@mui/icons-material";
+import { SearchForm } from "../../components/searchForm/SearchForm";
 
 interface Data {
   question: string;
@@ -180,6 +182,20 @@ export const CardsTable = () => {
     dispatch(setCardsPageCountAC(pageCount));
   };
 
+  // ==== ACTIONS ====
+
+  // ==== ADD NEW CARD ====
+
+  const addNewCardHandler = () => {
+    // dispatch(addPackTC(page, rowsPerPage, "Training card_new"));
+  };
+
+  // ==== DELETE CARD ====
+
+  const deleteCardHandler = (cardID: string) => {
+    dispatch(deleteCardTC(page, rowsPerPage, cardID));
+  };
+
   if (!isLoggedIn) {
     return <Navigate to={PATH.LOGIN} />;
   }
@@ -189,24 +205,13 @@ export const CardsTable = () => {
       {status === "loading" && <LinearProgress />}
       <Box className={style.container}>
         <EnhancedTableToolbar />
-        <div style={{ marginBottom: "20px" }}>
-          <TextField
-            fullWidth
-            size={"small"}
-            placeholder="Search"
-            disabled={status === "loading"}
-            value={value}
-            onChange={onChangeHandler}
-            InputProps={{
-              type: "search",
-              startAdornment: (
-                <InputAdornment position="start">
-                  <SearchIcon />
-                </InputAdornment>
-              ),
-            }}
-          />
-        </div>
+        <SearchForm
+          title={"add new card"}
+          status={status}
+          value={value}
+          onChangeHandler={onChangeHandler}
+          addNewItemHandler={addNewCardHandler}
+        />
         <TableContainer className={style.tableContainer}>
           <Table
             sx={{ minWidth: 750 }}
@@ -279,6 +284,12 @@ export const CardsTable = () => {
                             ?.textAlign
                         }
                       >
+                        <IconButton
+                          disabled={status === "loading"}
+                          onClick={() => deleteCardHandler(card._id)}
+                        >
+                          <Delete />
+                        </IconButton>
                         <IconButton
                           disabled={status === "loading"}
                           onClick={() =>
