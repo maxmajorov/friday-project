@@ -2,15 +2,15 @@ import { AxiosResponse } from "axios";
 import { instance } from "./api-instance";
 
 export const getCardsAPI = {
-  getCardsList(cardsPackID: string) {
+  getCardsList(page: number, pageCount: number, cardsPackID: string) {
     return instance.get<any, AxiosResponse<CardsResponseType>, any>(
-      `cards/card?cardsPack_id=${cardsPackID}`
+      `cards/card?page=${page}&pageCount=${pageCount}&cardsPack_id=${cardsPackID}`
     );
   },
 
   getGradedCardsList(
     page: number,
-    pageCount: number = 8,
+    pageCount: number,
     min: number = 0,
     max: number = 5
   ) {
@@ -33,9 +33,9 @@ export const getCardsAPI = {
   addCard(question: string, answer: string, cardsPack_id: string) {
     const data: AddCardPayloadType = {
       card: {
-        cardsPack_id,
         question,
         answer,
+        cardsPack_id,
       },
     };
     return instance.post<

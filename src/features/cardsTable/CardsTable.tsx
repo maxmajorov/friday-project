@@ -18,6 +18,7 @@ import { Link, Navigate, useNavigate } from "react-router-dom";
 import { PATH } from "../../components/common/routes/RoutesConstants";
 import { useAppDispatch, useAppSelector } from "../../bll/store";
 import {
+  addCardTC,
   cardsPageCountSelect,
   cardsPageSelect,
   cardsSelect,
@@ -27,6 +28,7 @@ import {
   setCardsPageAC,
   setCardsPageCountAC,
   totalCardsCountSelect,
+  updateCardTC,
 } from "../../bll/reducers/cards-reducer";
 import { IconButton } from "@mui/material";
 import LinearProgress from "@mui/material/LinearProgress";
@@ -171,7 +173,7 @@ export const CardsTable = () => {
   // ОРГАНИЗОВАТЬ ПОИСК!!!
 
   React.useEffect(() => {
-    dispatch(getCardsListTC(packID));
+    dispatch(getCardsListTC(page, rowsPerPage, packID));
   }, [dispatch, debouncedValue, packID, page, rowsPerPage]);
 
   const handleChangePage = (newPage: number) => {
@@ -187,13 +189,21 @@ export const CardsTable = () => {
   // ==== ADD NEW CARD ====
 
   const addNewCardHandler = () => {
-    // dispatch(addPackTC(page, rowsPerPage, "Training card_new"));
+    dispatch(
+      addCardTC(page, rowsPerPage, "New question", "New answer", packID)
+    );
   };
 
   // ==== DELETE CARD ====
 
   const deleteCardHandler = (cardID: string) => {
     dispatch(deleteCardTC(page, rowsPerPage, cardID));
+  };
+
+  // ==== UPDATE CARD ====
+
+  const updateCardHandler = (cardID: string) => {
+    // dispatch(updateCardTC(page, rowsPerPage, cardID, "Updated name by Max"));
   };
 
   if (!isLoggedIn) {

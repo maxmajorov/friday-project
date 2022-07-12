@@ -77,11 +77,11 @@ export const setCardsPageCountAC = (pageCount: number) =>
 // ==== THUNKS =====
 
 export const getCardsListTC =
-  (cardsPackID: string): AppThunk =>
+  (page: number, pageCount: number, packID: string): AppThunk =>
   async (dispatch) => {
     try {
       dispatch(appSetStatusAC("loading"));
-      const response = await getCardsAPI.getCardsList(cardsPackID);
+      const response = await getCardsAPI.getCardsList(page, pageCount, packID);
       dispatch(getCardsAC(response.data));
     } catch (e) {
       const err = e as Error | AxiosError<{ error: string }>;
@@ -123,19 +123,14 @@ export const addCardTC =
     pageCount: number,
     question: string,
     answer: string,
-    cardsPack_id: string,
-    cardsCount: number
+    packID: string
   ): AppThunk =>
   async (dispatch) => {
     try {
       dispatch(appSetStatusAC("loading"));
-      const response = await getCardsAPI.addCard(
-        question,
-        answer,
-        cardsPack_id
-      );
+      const response = await getCardsAPI.addCard(question, answer, packID);
 
-      dispatch(getCardsListTC(cardsPack_id));
+      dispatch(getCardsListTC(page, pageCount, packID));
     } catch (e) {
       const err = e as Error | AxiosError<{ error: string }>;
       handleNetworkError(dispatch, err);
@@ -145,18 +140,13 @@ export const addCardTC =
   };
 
 export const deleteCardTC =
-  (
-    page: number,
-    pageCount: number,
-    // cardsPackID: string,
-    cardID: string
-  ): AppThunk =>
+  (page: number, pageCount: number, cardID: string): AppThunk =>
   async (dispatch) => {
     try {
       dispatch(appSetStatusAC("loading"));
       const response = await getCardsAPI.deleteCard(cardID);
 
-      dispatch(getCardsListTC(cardID));
+      dispatch(getCardsListTC(page, pageCount, cardID));
     } catch (e) {
       const err = e as Error | AxiosError<{ error: string }>;
       handleNetworkError(dispatch, err);
@@ -169,11 +159,9 @@ export const updateCardTC =
   (
     page: number,
     pageCount: number,
-    cardsPackID: string,
     cardID: string,
     newQuestion: string,
-    newAnswer: string,
-    cardsCount: number
+    newAnswer: string
   ): AppThunk =>
   async (dispatch) => {
     try {
@@ -184,7 +172,7 @@ export const updateCardTC =
         newAnswer
       );
 
-      dispatch(getCardsListTC(cardsPackID));
+      dispatch(getCardsListTC(page, pageCount, cardID));
     } catch (e) {
       const err = e as Error | AxiosError<{ error: string }>;
       handleNetworkError(dispatch, err);
