@@ -36,7 +36,10 @@ import { appStatusSelect } from "../../bll/reducers/app-reducer";
 import { packIdSelect } from "../../bll/reducers/packs-reducer";
 import { useDebounce } from "../../utils/useDebounce";
 import { PaginationSelect } from "../../components/pagination/PaginationSelect";
-import { isLoggedInSelector } from "../../bll/reducers/auth-reducer";
+import {
+  isLoggedInSelector,
+  userIDSelector,
+} from "../../bll/reducers/auth-reducer";
 import { Delete } from "@mui/icons-material";
 import { SearchForm } from "../../components/searchForm/SearchForm";
 
@@ -65,13 +68,13 @@ const headCells: readonly HeadCell[] = [
   },
   {
     id: "answer",
-    textAlign: "left",
+    textAlign: "center",
     disablePadding: true,
     label: "Answer",
   },
   {
     id: "lastUpdated",
-    textAlign: "right",
+    textAlign: "center",
     disablePadding: true,
     label: "Last updated",
     sortable: true,
@@ -159,6 +162,7 @@ export const CardsTable = () => {
   const rowsPerPage = useAppSelector(cardsPageCountSelect);
   const packID = useAppSelector(packIdSelect);
   const status = useAppSelector(appStatusSelect);
+  const userID = useAppSelector(userIDSelector);
 
   // ==== SEARCHING =====
 
@@ -287,32 +291,30 @@ export const CardsTable = () => {
                         <GradeIcon fontSize="small" />
                         <GradeIcon fontSize="small" />
                       </TableCell>
-                      <TableCell
-                        padding="normal"
-                        align={
-                          headCells.find((cell) => cell.id === "grade")
-                            ?.textAlign
-                        }
-                      >
-                        <IconButton
-                          disabled={status === "loading"}
-                          onClick={() => deleteCardHandler(card._id)}
-                        >
-                          <Delete />
-                        </IconButton>
-                        <IconButton
-                          disabled={status === "loading"}
-                          onClick={() =>
-                            navigate(PATH.CARD_INFO, {
-                              state: {
-                                question: card.question,
-                                answer: card.answer,
-                              },
-                            })
-                          }
-                        >
-                          <EditIcon />
-                        </IconButton>
+                      <TableCell align="center">
+                        {userID === card.user_id ? (
+                          <>
+                            <IconButton
+                              disabled={status === "loading"}
+                              onClick={() => deleteCardHandler(card._id)}
+                            >
+                              <Delete />
+                            </IconButton>
+                            <IconButton
+                              disabled={status === "loading"}
+                              onClick={() =>
+                                navigate(PATH.CARD_INFO, {
+                                  state: {
+                                    question: card.question,
+                                    answer: card.answer,
+                                  },
+                                })
+                              }
+                            >
+                              <EditIcon />
+                            </IconButton>
+                          </>
+                        ) : null}
                       </TableCell>
                     </TableRow>
                   );
