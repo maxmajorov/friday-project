@@ -44,7 +44,7 @@ export const AddNewCardModal: React.FC<PropsType> = ({ action, addItem }) => {
           placeholder={"Answer"}
           disabled={status === "loading"}
           onChange={onChangeAnswerHandler}
-          style={{ marginTop: "20px" }}
+          style={{ margin: "20px 0" }}
         />
 
         <div>

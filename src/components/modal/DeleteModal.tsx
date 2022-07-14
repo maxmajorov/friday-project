@@ -5,6 +5,7 @@ import { useAppSelector } from "../../bll/store";
 import { appStatusSelect } from "../../bll/reducers/app-reducer";
 
 type PropsType = {
+  title: string;
   name: string;
   packID: string;
   action: string;
@@ -12,6 +13,7 @@ type PropsType = {
 };
 
 export const DeleteModal: React.FC<PropsType> = ({
+  title,
   packID,
   name,
   action,
@@ -22,12 +24,19 @@ export const DeleteModal: React.FC<PropsType> = ({
   return (
     <UniversalModal status={status} action={action}>
       <div>
-        <h3>Delete Pack</h3>
+        <h3>{title}</h3>
         <hr />
-        <p>
-          Do you really want to remove <b>{name}</b>? All cards will be excluded
-          from this course.
-        </p>
+        {title === "Delete pack" ? (
+          <p>
+            Do you really want to remove <b>{name}</b>? All cards will be
+            excluded from this course.
+          </p>
+        ) : (
+          <p>
+            Do you really want to remove <b>{name}</b>?
+          </p>
+        )}
+
         <div>
           <Button variant="contained" style={{ marginRight: "10px" }}>
             cancel

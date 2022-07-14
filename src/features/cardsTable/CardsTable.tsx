@@ -43,6 +43,7 @@ import { Delete } from "@mui/icons-material";
 import { SearchForm } from "../../components/searchForm/SearchForm";
 import { AddNewCardModal } from "../../components/modal/AddNewCardModal";
 import style from "./CardsTable.module.css";
+import { DeleteModal } from "../../components/modal/DeleteModal";
 
 interface Data {
   question: string;
@@ -298,12 +299,14 @@ export const CardsTable = () => {
                       <TableCell align="center">
                         {userID === card.user_id ? (
                           <>
-                            <IconButton
-                              disabled={status === "loading"}
-                              onClick={() => deleteCardHandler(card._id)}
-                            >
-                              <Delete color={"error"} />
-                            </IconButton>
+                            <DeleteModal
+                              title={"Delete card"}
+                              name={card.question}
+                              packID={card._id}
+                              action={"Delete"}
+                              deleteItem={deleteCardHandler}
+                            />
+
                             <IconButton
                               disabled={status === "loading"}
                               onClick={() =>

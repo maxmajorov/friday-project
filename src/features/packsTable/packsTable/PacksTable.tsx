@@ -266,6 +266,7 @@ export const PacksTable: React.FC = () => {
                       {userID === card.user_id ? (
                         <>
                           <DeleteModal
+                            title={"Delete pack"}
                             name={card.name}
                             packID={card._id}
                             action={"Delete"}
