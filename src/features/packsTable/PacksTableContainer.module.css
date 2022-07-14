@@ -1,9 +1,7 @@
 .container {
     display: flex;
     justify-content: space-around;
-    width: 80%;
-    /* left: 136px;
-    top: 84px; */
+    width: 70%;
     margin: 40px auto;
     padding: 20px 0;
     background: #FEFEFF;
@@ -21,6 +19,10 @@
     font-size: 16px;
     line-height:33px;   
     color: #2D2E46;
+}
+
+.rightSide {
+    width: 80%;
 }
 
 .rightTitle {

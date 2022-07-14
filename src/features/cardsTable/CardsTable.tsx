@@ -128,7 +128,7 @@ const EnhancedTableHead: React.FC = () => {
   };
 
   return (
-    <TableHead>
+    <TableHead style={{ backgroundColor: "rgba(0, 0, 0, 0.226)" }}>
       <TableRow>
         {headCells.map((headCell) => (
           <TableCell
@@ -298,7 +298,7 @@ export const CardsTable = () => {
                               disabled={status === "loading"}
                               onClick={() => deleteCardHandler(card._id)}
                             >
-                              <Delete />
+                              <Delete color={"error"} />
                             </IconButton>
                             <IconButton
                               disabled={status === "loading"}
@@ -311,7 +311,7 @@ export const CardsTable = () => {
                                 })
                               }
                             >
-                              <EditIcon />
+                              <EditIcon color={"warning"} />
                             </IconButton>
                           </>
                         ) : null}

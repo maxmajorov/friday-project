@@ -9,13 +9,12 @@ import TableCell from "@mui/material/TableCell";
 import TableSortLabel from "@mui/material/TableSortLabel";
 import Box from "@mui/material/Box";
 import { useAppDispatch, useAppSelector } from "../../../bll/store";
-import { Delete } from "@mui/icons-material";
+
 import KeyboardTabIcon from "@mui/icons-material/KeyboardTab";
 import CreateIcon from "@mui/icons-material/Create";
-import SchoolIcon from "@mui/icons-material/School";
+import LocalLibraryIcon from "@mui/icons-material/LocalLibrary";
 import {
   addPackTC,
-  deletePackTC,
   getSearchPacksListTC,
   getSortPacksListTC,
   packsSelect,
@@ -35,6 +34,7 @@ import { userIDSelector } from "../../../bll/reducers/auth-reducer";
 import { PaginationSelect } from "../../../components/pagination/PaginationSelect";
 import { SearchForm } from "../../../components/searchForm/SearchForm";
 import style from "./PacksTable.module.css";
+import { DeleteModal } from "../../../components/modal/DeleteModal";
 
 interface Data {
   id: string;
@@ -109,7 +109,7 @@ const EnhancedTableHead: React.FC = () => {
   };
 
   return (
-    <TableHead>
+    <TableHead style={{ backgroundColor: "rgba(0, 0, 0, 0.226)" }}>
       <TableRow>
         {headCells.map((headCell) => (
           <TableCell
@@ -181,9 +181,9 @@ export const PacksTable: React.FC = () => {
 
   // ==== DELETE PACK ====
 
-  const deletePackHandler = (packID: string) => {
-    dispatch(deletePackTC(page, rowsPerPage, packID));
-  };
+  // const deletePackHandler = (packID: string) => {
+  //   dispatch(deletePackTC(page, rowsPerPage, packID));
+  // };
 
   // ==== UPDATE PACK NAME ====
 
@@ -194,7 +194,7 @@ export const PacksTable: React.FC = () => {
   };
 
   return (
-    <Box sx={{ width: "100%" }}>
+    <Box className={style.container}>
       <SearchForm
         title={"add new pack"}
         status={status}
@@ -258,35 +258,29 @@ export const PacksTable: React.FC = () => {
                     >
                       {card.updated.slice(0, 10)}
                     </TableCell>
-                    <TableCell
-                      padding="normal"
-                      align={
-                        headCells.find((cell) => cell.id === "create")
-                          ?.textAlign
-                      }
-                    >
+                    <TableCell padding="normal" align={"center"}>
                       {card.user_name}
                     </TableCell>
 
-                    <TableCell align="right">
+                    <TableCell align="right" style={{ display: "flex" }}>
                       {userID === card.user_id ? (
                         <>
-                          <IconButton
-                            disabled={status === "loading"}
-                            onClick={() => deletePackHandler(card._id)}
-                          >
-                            <Delete />
-                          </IconButton>
+                          <DeleteModal
+                            name={card.name}
+                            packID={card._id}
+                            action={"delete"}
+                          />
+
                           <IconButton
                             disabled={status === "loading"}
                             onClick={() => updatePackHandler(card._id)}
                           >
-                            <CreateIcon />
+                            <CreateIcon color={"warning"} />
                           </IconButton>
                         </>
                       ) : null}
                       <IconButton disabled={status === "loading"}>
-                        <SchoolIcon />
+                        <LocalLibraryIcon color={"info"} />
                       </IconButton>
                     </TableCell>
                   </TableRow>
