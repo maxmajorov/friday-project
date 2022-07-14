@@ -13,7 +13,6 @@ import ArrowBackOutlinedIcon from "@mui/icons-material/ArrowBackOutlined";
 import Button from "@mui/material/Button";
 import GradeIcon from "@mui/icons-material/Grade";
 import EditIcon from "@mui/icons-material/Edit";
-import style from "./CardsTable.module.css";
 import { Link, Navigate, useNavigate } from "react-router-dom";
 import { PATH } from "../../components/common/routes/RoutesConstants";
 import { useAppDispatch, useAppSelector } from "../../bll/store";
@@ -42,7 +41,8 @@ import {
 } from "../../bll/reducers/auth-reducer";
 import { Delete } from "@mui/icons-material";
 import { SearchForm } from "../../components/searchForm/SearchForm";
-import { AddNewPackModal } from "../../components/modal/AddNewPackModal";
+import { AddNewCardModal } from "../../components/modal/AddNewCardModal";
+import style from "./CardsTable.module.css";
 
 interface Data {
   question: string;
@@ -193,10 +193,8 @@ export const CardsTable = () => {
 
   // ==== ADD NEW CARD ====
 
-  const addNewCardHandler = () => {
-    dispatch(
-      addCardTC(page, rowsPerPage, "New question", "New answer", packID)
-    );
+  const addNewCardHandler = (newQuestion: string, newAnswer: string) => {
+    dispatch(addCardTC(page, rowsPerPage, newQuestion, newAnswer, packID));
   };
 
   // ==== DELETE CARD ====
@@ -226,7 +224,7 @@ export const CardsTable = () => {
             value={value}
             onChangeHandler={onChangeHandler}
           />
-          <AddNewPackModal
+          <AddNewCardModal
             action={"Add new card"}
             addItem={addNewCardHandler}
           />
