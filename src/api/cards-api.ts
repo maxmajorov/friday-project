@@ -19,6 +19,20 @@ export const getCardsAPI = {
     );
   },
 
+  setCardsGrade(cardsPack_id: string, grade: number) {
+    const data: SetCardGradePayloadType = {
+      card: {
+        cardsPack_id,
+        grade,
+      },
+    };
+    return instance.put<
+      any,
+      AxiosResponse<PUDResponseType>,
+      SetCardGradePayloadType
+    >(`cards/card`, data);
+  },
+
   getSortCardsList(
     page: number,
     pageCount: number,
@@ -75,6 +89,13 @@ export type AddCardPayloadType = {
     cardsPack_id: string;
     question: string;
     answer: string;
+  };
+};
+
+export type SetCardGradePayloadType = {
+  card: {
+    cardsPack_id: string;
+    grade: number;
   };
 };
 

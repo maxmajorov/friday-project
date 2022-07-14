@@ -58,6 +58,12 @@ export const cardsReducer = (
       };
     }
 
+    case "CARDS/set-card-grade": {
+      return {
+        ...state,
+      };
+    }
+
     default:
       return state;
   }
@@ -73,6 +79,9 @@ export const setCardsPageAC = (page: number) =>
 
 export const setCardsPageCountAC = (pageCount: number) =>
   ({ type: "CARDS/set-cards-countPage", pageCount } as const);
+
+export const setCardGardeAC = (cardID: string, grade: number) =>
+  ({ type: "CARDS/set-card-grade", cardID, grade } as const);
 
 // ==== THUNKS =====
 
@@ -181,6 +190,22 @@ export const updateCardTC =
     }
   };
 
+export const setCardGradeTC =
+  (cardID: string, grade: number): AppThunk =>
+  async (dispatch) => {
+    try {
+      dispatch(appSetStatusAC("loading"));
+      const response = await getCardsAPI.setCardsGrade(cardID, grade);
+
+      dispatch(setCardGardeAC(cardID, grade));
+    } catch (e) {
+      const err = e as Error | AxiosError<{ error: string }>;
+      handleNetworkError(dispatch, err);
+    } finally {
+      dispatch(appSetStatusAC("idle"));
+    }
+  };
+
 // ==== SELECTORS ====
 
 export const cardsSelect = (state: AppRootStateType) => state.cards.cards;
@@ -201,8 +226,10 @@ export type CardListType = Array<CardType> & {
 export type GetCardsType = ReturnType<typeof getCardsAC>;
 export type SetCardsPageType = ReturnType<typeof setCardsPageAC>;
 export type SetCardsPageCountType = ReturnType<typeof setCardsPageCountAC>;
+export type SetCardGradeType = ReturnType<typeof setCardGardeAC>;
 
 export type CardsActionsTypes =
   | GetCardsType
   | SetCardsPageType
-  | SetCardsPageCountType;
+  | SetCardsPageCountType
+  | SetCardGradeType;

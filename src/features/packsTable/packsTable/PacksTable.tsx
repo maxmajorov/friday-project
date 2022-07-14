@@ -233,7 +233,7 @@ export const PacksTable: React.FC = () => {
                     </TableCell>
                     <TableCell>
                       <IconButton
-                        disabled={status === "loading"}
+                        disabled={status === "loading" || card.cardsCount === 0}
                         onClick={() => {
                           dispatch(setPackIdAC(card._id));
                           navigate(PATH.CARDS_LIST);
@@ -280,8 +280,11 @@ export const PacksTable: React.FC = () => {
                           />
                         </>
                       ) : null}
-                      <IconButton disabled={status === "loading"}>
-                        <LocalLibraryIcon color={"info"} />
+                      <IconButton
+                        disabled={status === "loading"}
+                        onClick={() => navigate(PATH.CARD_LEARN)}
+                      >
+                        <LocalLibraryIcon />
                       </IconButton>
                     </TableCell>
                   </TableRow>
