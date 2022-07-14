@@ -11,9 +11,8 @@ import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import ArrowBackOutlinedIcon from "@mui/icons-material/ArrowBackOutlined";
 import Button from "@mui/material/Button";
-import GradeIcon from "@mui/icons-material/Grade";
-import EditIcon from "@mui/icons-material/Edit";
-import { Link, Navigate, useNavigate } from "react-router-dom";
+import GradeOutlinedIcon from "@mui/icons-material/GradeOutlined";
+import { Link, Navigate } from "react-router-dom";
 import { PATH } from "../../components/common/routes/RoutesConstants";
 import { useAppDispatch, useAppSelector } from "../../bll/store";
 import {
@@ -29,7 +28,6 @@ import {
   totalCardsCountSelect,
   updateCardTC,
 } from "../../bll/reducers/cards-reducer";
-import { IconButton } from "@mui/material";
 import LinearProgress from "@mui/material/LinearProgress";
 import { appStatusSelect } from "../../bll/reducers/app-reducer";
 import { packIdSelect } from "../../bll/reducers/packs-reducer";
@@ -39,18 +37,18 @@ import {
   isLoggedInSelector,
   userIDSelector,
 } from "../../bll/reducers/auth-reducer";
-import { Delete } from "@mui/icons-material";
 import { SearchForm } from "../../components/searchForm/SearchForm";
 import { AddNewCardModal } from "../../components/modal/AddNewCardModal";
 import style from "./CardsTable.module.css";
 import { DeleteModal } from "../../components/modal/DeleteModal";
+import { EditCardModal } from "../../components/modal/EditCardModal";
 
 interface Data {
   question: string;
   answer: string;
   lastUpdated: Date;
   grade: string;
-  edit: string;
+  actions: string;
 }
 
 interface HeadCell {
@@ -88,10 +86,10 @@ const headCells: readonly HeadCell[] = [
     label: "Grade",
   },
   {
-    id: "edit",
+    id: "actions",
     textAlign: "center",
     disablePadding: false,
-    label: "Edit",
+    label: "Actions",
   },
 ];
 
@@ -155,7 +153,6 @@ export const CardsTable = () => {
   const [value, setValue] = React.useState("");
 
   const dispatch = useAppDispatch();
-  const navigate = useNavigate();
 
   const isLoggedIn = useAppSelector(isLoggedInSelector);
   const cardsSelector = useAppSelector(cardsSelect);
@@ -206,8 +203,12 @@ export const CardsTable = () => {
 
   // ==== UPDATE CARD ====
 
-  const updateCardHandler = (cardID: string) => {
-    // dispatch(updateCardTC(page, rowsPerPage, cardID, "Updated name by Max"));
+  const updateCardHandler = (
+    cardID: string,
+    newQuestion: string,
+    newAnswer: string
+  ) => {
+    dispatch(updateCardTC(page, rowsPerPage, cardID, newQuestion, newAnswer));
   };
 
   if (!isLoggedIn) {
@@ -287,16 +288,13 @@ export const CardsTable = () => {
                             ?.textAlign
                         }
                       >
-                        <GradeIcon
-                          style={{ color: "rgba(33, 38, 143, 1)" }}
-                          fontSize="small"
-                        />
-                        <GradeIcon fontSize="small" />
-                        <GradeIcon fontSize="small" />
-                        <GradeIcon fontSize="small" />
-                        <GradeIcon fontSize="small" />
+                        <GradeOutlinedIcon fontSize="small" />
+                        <GradeOutlinedIcon fontSize="small" />
+                        <GradeOutlinedIcon fontSize="small" />
+                        <GradeOutlinedIcon fontSize="small" />
+                        <GradeOutlinedIcon fontSize="small" />
                       </TableCell>
-                      <TableCell align="center">
+                      <TableCell align="center" style={{ display: "flex" }}>
                         {userID === card.user_id ? (
                           <>
                             <DeleteModal
@@ -306,20 +304,13 @@ export const CardsTable = () => {
                               action={"Delete"}
                               deleteItem={deleteCardHandler}
                             />
-
-                            <IconButton
-                              disabled={status === "loading"}
-                              onClick={() =>
-                                navigate(PATH.CARD_INFO, {
-                                  state: {
-                                    question: card.question,
-                                    answer: card.answer,
-                                  },
-                                })
-                              }
-                            >
-                              <EditIcon color={"warning"} />
-                            </IconButton>
+                            <EditCardModal
+                              question={card.question}
+                              answer={card.answer}
+                              cardID={card._id}
+                              action={"Edit"}
+                              updateItem={updateCardHandler}
+                            />
                           </>
                         ) : null}
                       </TableCell>
