@@ -1,30 +1,23 @@
 import React from "react";
 import { Button } from "@mui/material";
 import { UniversalModal } from "./Modal";
-import { useAppDispatch, useAppSelector } from "../../bll/store";
-import {
-  deletePackTC,
-  pageCountSelect,
-  pageSelect,
-} from "../../bll/reducers/packs-reducer";
+import { useAppSelector } from "../../bll/store";
 import { appStatusSelect } from "../../bll/reducers/app-reducer";
 
 type PropsType = {
   name: string;
   packID: string;
   action: string;
+  deleteItem: (packID: string) => void;
 };
 
-export const DeleteModal: React.FC<PropsType> = ({ packID, name, action }) => {
-  const dispatch = useAppDispatch();
-
+export const DeleteModal: React.FC<PropsType> = ({
+  packID,
+  name,
+  action,
+  deleteItem,
+}) => {
   const status = useAppSelector(appStatusSelect);
-  const page = useAppSelector(pageSelect);
-  const rowsPerPage = useAppSelector(pageCountSelect);
-
-  const deletePackHandler = () => {
-    dispatch(deletePackTC(page, rowsPerPage, packID));
-  };
 
   return (
     <UniversalModal status={status} action={action}>
@@ -36,8 +29,14 @@ export const DeleteModal: React.FC<PropsType> = ({ packID, name, action }) => {
           from this course.
         </p>
         <div>
-          <Button>cancel</Button>
-          <Button color={"error"} onClick={deletePackHandler}>
+          <Button variant="contained" style={{ marginRight: "10px" }}>
+            cancel
+          </Button>
+          <Button
+            variant="contained"
+            color={"error"}
+            onClick={() => deleteItem(packID)}
+          >
             delete
           </Button>
         </div>

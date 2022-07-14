@@ -15,7 +15,7 @@ type PropsType = {
   action: string;
 };
 
-export const DeleteModal: React.FC<PropsType> = ({ packID, name, action }) => {
+export const EditModal: React.FC<PropsType> = ({ packID, name, action }) => {
   const dispatch = useAppDispatch();
 
   const status = useAppSelector(appStatusSelect);
@@ -36,8 +36,14 @@ export const DeleteModal: React.FC<PropsType> = ({ packID, name, action }) => {
           from this course.
         </p>
         <div>
-          <Button>cancel</Button>
-          <Button color={"error"} onClick={deletePackHandler}>
+          <Button variant="contained" style={{ marginRight: "10px" }}>
+            cancel
+          </Button>
+          <Button
+            variant="contained"
+            color={"error"}
+            onClick={deletePackHandler}
+          >
             delete
           </Button>
         </div>

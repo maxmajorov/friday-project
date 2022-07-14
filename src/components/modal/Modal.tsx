@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import Box from "@mui/material/Box";
 import Modal from "@mui/material/Modal";
-import { IconButton } from "@mui/material";
+import { Button, IconButton } from "@mui/material";
 import { Delete } from "@mui/icons-material";
 import CreateIcon from "@mui/icons-material/Create";
 
@@ -23,7 +23,11 @@ type PropsType = {
   children: React.ReactNode;
 };
 
-export const UniversalModal: React.FC<PropsType> = ({ status, children }) => {
+export const UniversalModal: React.FC<PropsType> = ({
+  action,
+  status,
+  children,
+}) => {
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -31,9 +35,15 @@ export const UniversalModal: React.FC<PropsType> = ({ status, children }) => {
   return (
     <div>
       <IconButton disabled={status === "loading"} onClick={handleOpen}>
-        action === "delete" ? <Delete color={"error"} />
-        : action === "edit" ? <CreateIcon color={"warning"} />: null
+        {action === "delete" ? (
+          <Delete />
+        ) : action === "edit" ? (
+          <CreateIcon />
+        ) : null}
       </IconButton>
+      {action === "addItem" ? (
+        <Button onClick={handleOpen}>add new pack</Button>
+      ) : null}
       <Modal
         open={open}
         onClose={handleClose}

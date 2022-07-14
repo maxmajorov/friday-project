@@ -170,11 +170,16 @@ export const getSortPacksListTC =
   };
 
 export const addPackTC =
-  (page: number, pageCount: number, name: string): AppThunk =>
+  (
+    page: number,
+    pageCount: number,
+    name: string,
+    _private: boolean
+  ): AppThunk =>
   async (dispatch) => {
     try {
       dispatch(appSetStatusAC("loading"));
-      const response = await getPacksAPI.addPack(name);
+      const response = await getPacksAPI.addPack(name, _private);
       dispatch(getPacksListTC(page, pageCount));
     } catch (e) {
       const err = e as Error | AxiosError<{ error: string }>;

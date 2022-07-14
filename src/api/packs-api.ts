@@ -37,10 +37,11 @@ export const getPacksAPI = {
     );
   },
 
-  addPack(name: string) {
+  addPack(name: string, _private: boolean) {
     const data: AddPackPayloadType = {
       cardsPack: {
         name,
+        private: _private,
       },
     };
     return instance.post<

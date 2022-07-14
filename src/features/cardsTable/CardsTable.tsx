@@ -42,6 +42,7 @@ import {
 } from "../../bll/reducers/auth-reducer";
 import { Delete } from "@mui/icons-material";
 import { SearchForm } from "../../components/searchForm/SearchForm";
+import { AddNewPackModal } from "../../components/modal/AddNewPackModal";
 
 interface Data {
   question: string;
@@ -219,13 +220,15 @@ export const CardsTable = () => {
       {status === "loading" && <LinearProgress />}
       <Box className={style.container}>
         <EnhancedTableToolbar />
-        <SearchForm
-          title={"add new card"}
-          status={status}
-          value={value}
-          onChangeHandler={onChangeHandler}
-          addNewItemHandler={addNewCardHandler}
-        />
+        <div className={style.search}>
+          <SearchForm
+            status={status}
+            value={value}
+            onChangeHandler={onChangeHandler}
+          />
+          {/* <AddNewPackModal action={"addItem"} addItem={addNewPackHandler} /> */}
+        </div>
+
         <TableContainer className={style.tableContainer}>
           <Table
             sx={{ minWidth: 750 }}

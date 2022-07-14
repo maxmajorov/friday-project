@@ -15,6 +15,7 @@ import CreateIcon from "@mui/icons-material/Create";
 import LocalLibraryIcon from "@mui/icons-material/LocalLibrary";
 import {
   addPackTC,
+  deletePackTC,
   getSearchPacksListTC,
   getSortPacksListTC,
   packsSelect,
@@ -35,6 +36,8 @@ import { PaginationSelect } from "../../../components/pagination/PaginationSelec
 import { SearchForm } from "../../../components/searchForm/SearchForm";
 import style from "./PacksTable.module.css";
 import { DeleteModal } from "../../../components/modal/DeleteModal";
+import { Button } from "@mui/material";
+import { AddNewPackModal } from "../../../components/modal/AddNewPackModal";
 
 interface Data {
   id: string;
@@ -175,15 +178,15 @@ export const PacksTable: React.FC = () => {
 
   // ==== ADD NEW PACK ====
 
-  const addNewPackHandler = () => {
-    dispatch(addPackTC(page, rowsPerPage, "Training card_new"));
+  const addNewPackHandler = (newValue: string, _private: boolean) => {
+    dispatch(addPackTC(page, rowsPerPage, newValue, _private));
   };
 
   // ==== DELETE PACK ====
 
-  // const deletePackHandler = (packID: string) => {
-  //   dispatch(deletePackTC(page, rowsPerPage, packID));
-  // };
+  const deletePackHandler = (packID: string) => {
+    dispatch(deletePackTC(page, rowsPerPage, packID));
+  };
 
   // ==== UPDATE PACK NAME ====
 
@@ -195,13 +198,15 @@ export const PacksTable: React.FC = () => {
 
   return (
     <Box className={style.container}>
-      <SearchForm
-        title={"add new pack"}
-        status={status}
-        value={value}
-        onChangeHandler={onChangeHandler}
-        addNewItemHandler={addNewPackHandler}
-      />
+      <div className={style.search}>
+        <SearchForm
+          status={status}
+          value={value}
+          onChangeHandler={onChangeHandler}
+        />
+        <AddNewPackModal action={"addItem"} addItem={addNewPackHandler} />
+      </div>
+
       <TableContainer className={style.tableContainer}>
         <Table
           sx={{ minWidth: 750 }}
@@ -269,8 +274,8 @@ export const PacksTable: React.FC = () => {
                             name={card.name}
                             packID={card._id}
                             action={"delete"}
+                            deleteItem={deletePackHandler}
                           />
-
                           <IconButton
                             disabled={status === "loading"}
                             onClick={() => updatePackHandler(card._id)}
