@@ -1,9 +1,10 @@
 import React, { useState } from "react";
 import Box from "@mui/material/Box";
 import Modal from "@mui/material/Modal";
-import { Button, IconButton } from "@mui/material";
+import { IconButton, Tooltip } from "@mui/material";
 import { Delete } from "@mui/icons-material";
 import CreateIcon from "@mui/icons-material/Create";
+import AddTaskIcon from "@mui/icons-material/AddTask";
 
 const style = {
   position: "absolute" as "absolute",
@@ -30,20 +31,26 @@ export const UniversalModal: React.FC<PropsType> = ({
 }) => {
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
+  const handleClose = () => {
+    setOpen(false);
+  };
 
   return (
     <div>
-      <IconButton disabled={status === "loading"} onClick={handleOpen}>
-        {action === "delete" ? (
-          <Delete />
-        ) : action === "edit" ? (
-          <CreateIcon />
-        ) : null}
-      </IconButton>
-      {action === "addItem" ? (
-        <Button onClick={handleOpen}>add new pack</Button>
-      ) : null}
+      <Tooltip title={action}>
+        <span>
+          <IconButton disabled={status === "loading"} onClick={handleOpen}>
+            {action === "Delete" ? (
+              <Delete />
+            ) : action === "Edit" ? (
+              <CreateIcon />
+            ) : action === "Add new pack" || "Add new card" ? (
+              <AddTaskIcon fontSize={"large"} color={"success"} sx={{}} />
+            ) : null}
+          </IconButton>
+        </span>
+      </Tooltip>
+
       <Modal
         open={open}
         onClose={handleClose}

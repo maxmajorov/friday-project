@@ -9,9 +9,7 @@ import TableCell from "@mui/material/TableCell";
 import TableSortLabel from "@mui/material/TableSortLabel";
 import Box from "@mui/material/Box";
 import { useAppDispatch, useAppSelector } from "../../../bll/store";
-
 import KeyboardTabIcon from "@mui/icons-material/KeyboardTab";
-import CreateIcon from "@mui/icons-material/Create";
 import LocalLibraryIcon from "@mui/icons-material/LocalLibrary";
 import {
   addPackTC,
@@ -36,8 +34,8 @@ import { PaginationSelect } from "../../../components/pagination/PaginationSelec
 import { SearchForm } from "../../../components/searchForm/SearchForm";
 import style from "./PacksTable.module.css";
 import { DeleteModal } from "../../../components/modal/DeleteModal";
-import { Button } from "@mui/material";
 import { AddNewPackModal } from "../../../components/modal/AddNewPackModal";
+import { EditTitleModal } from "../../../components/modal/EditTitleModal";
 
 interface Data {
   id: string;
@@ -190,10 +188,8 @@ export const PacksTable: React.FC = () => {
 
   // ==== UPDATE PACK NAME ====
 
-  const updatePackHandler = (packID: string) => {
-    dispatch(
-      updatePackNameTC(page, rowsPerPage, packID, "Updated name by Max")
-    );
+  const updatePackHandler = (packID: string, newValue: string) => {
+    dispatch(updatePackNameTC(page, rowsPerPage, packID, newValue));
   };
 
   return (
@@ -204,7 +200,7 @@ export const PacksTable: React.FC = () => {
           value={value}
           onChangeHandler={onChangeHandler}
         />
-        <AddNewPackModal action={"addItem"} addItem={addNewPackHandler} />
+        <AddNewPackModal action={"Add new pack"} addItem={addNewPackHandler} />
       </div>
 
       <TableContainer className={style.tableContainer}>
@@ -266,22 +262,21 @@ export const PacksTable: React.FC = () => {
                     <TableCell padding="normal" align={"center"}>
                       {card.user_name}
                     </TableCell>
-
                     <TableCell align="right" style={{ display: "flex" }}>
                       {userID === card.user_id ? (
                         <>
                           <DeleteModal
                             name={card.name}
                             packID={card._id}
-                            action={"delete"}
+                            action={"Delete"}
                             deleteItem={deletePackHandler}
                           />
-                          <IconButton
-                            disabled={status === "loading"}
-                            onClick={() => updatePackHandler(card._id)}
-                          >
-                            <CreateIcon color={"warning"} />
-                          </IconButton>
+                          <EditTitleModal
+                            name={card.name}
+                            packID={card._id}
+                            action={"Edit"}
+                            updateItem={updatePackHandler}
+                          />
                         </>
                       ) : null}
                       <IconButton disabled={status === "loading"}>

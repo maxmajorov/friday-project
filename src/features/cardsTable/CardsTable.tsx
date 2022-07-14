@@ -226,7 +226,10 @@ export const CardsTable = () => {
             value={value}
             onChangeHandler={onChangeHandler}
           />
-          {/* <AddNewPackModal action={"addItem"} addItem={addNewPackHandler} /> */}
+          <AddNewPackModal
+            action={"Add new card"}
+            addItem={addNewCardHandler}
+          />
         </div>
 
         <TableContainer className={style.tableContainer}>

@@ -1,17 +1,23 @@
 import React, { useState } from "react";
-import { Button, Checkbox, Input } from "@mui/material";
+import { Button, Input } from "@mui/material";
 import { UniversalModal } from "./Modal";
 import { useAppSelector } from "../../bll/store";
 import { appStatusSelect } from "../../bll/reducers/app-reducer";
 
 type PropsType = {
+  name: string;
+  packID: string;
   action: string;
-  addItem: (value: string, _private: boolean) => void;
+  updateItem: (packID: string, value: string) => void;
 };
 
-export const AddNewPackModal: React.FC<PropsType> = ({ action, addItem }) => {
-  const [value, setValue] = useState("");
-  const [_private, setPrivate] = useState(false);
+export const EditTitleModal: React.FC<PropsType> = ({
+  name,
+  packID,
+  action,
+  updateItem,
+}) => {
+  const [value, setValue] = useState(name);
 
   const status = useAppSelector(appStatusSelect);
 
@@ -21,25 +27,18 @@ export const AddNewPackModal: React.FC<PropsType> = ({ action, addItem }) => {
     setValue(event.currentTarget.value);
   };
 
-  const checkedHandler = () => {
-    setPrivate(!_private);
-  };
-
   return (
     <UniversalModal status={status} action={action}>
       <div>
-        <h3>Add new pack</h3>
+        <h3>Edit pack's title</h3>
         <hr />
         <Input
           defaultValue={value}
           placeholder={"Pack's name"}
           disabled={status === "loading"}
           onChange={onChangeHandler}
-          style={{ marginTop: "20px" }}
+          style={{ margin: "20px 0" }}
         />
-        <div style={{ margin: "20px 0" }}>
-          <Checkbox checked={_private} onChange={checkedHandler} /> Private pack
-        </div>
         <div>
           <Button variant="contained" style={{ marginRight: "10px" }}>
             cancel
@@ -47,7 +46,7 @@ export const AddNewPackModal: React.FC<PropsType> = ({ action, addItem }) => {
           <Button
             variant="contained"
             onClick={() => {
-              addItem(value, _private);
+              updateItem(packID, value);
             }}
             disabled={!value}
           >
