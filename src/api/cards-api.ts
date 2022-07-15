@@ -19,10 +19,10 @@ export const getCardsAPI = {
     );
   },
 
-  setCardsGrade(cardsPack_id: string, grade: number) {
+  setCardsGrade(_id: string, grade: number) {
     const data: SetCardGradePayloadType = {
       card: {
-        cardsPack_id,
+        _id,
         grade,
       },
     };
@@ -94,7 +94,7 @@ export type AddCardPayloadType = {
 
 export type SetCardGradePayloadType = {
   card: {
-    cardsPack_id: string;
+    _id: string;
     grade: number;
   };
 };

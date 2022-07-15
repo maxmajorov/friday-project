@@ -3,6 +3,7 @@ import { Button, Input } from "@mui/material";
 import { UniversalModal } from "./Modal";
 import { useAppSelector } from "../../bll/store";
 import { appStatusSelect } from "../../bll/reducers/app-reducer";
+// import { useNavigate } from "react-router-dom";
 
 type PropsType = {
   name: string;
@@ -18,6 +19,8 @@ export const EditTitleModal: React.FC<PropsType> = ({
   updateItem,
 }) => {
   const [value, setValue] = useState(name);
+
+  // const navigate = useNavigate();
 
   const status = useAppSelector(appStatusSelect);
 
@@ -40,7 +43,11 @@ export const EditTitleModal: React.FC<PropsType> = ({
           style={{ margin: "20px 0" }}
         />
         <div>
-          <Button variant="contained" style={{ marginRight: "10px" }}>
+          <Button
+            variant="contained"
+            style={{ marginRight: "10px" }}
+            // onClick={() => navigate(-1)}
+          >
             cancel
           </Button>
           <Button

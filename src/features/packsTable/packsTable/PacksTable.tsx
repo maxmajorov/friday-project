@@ -16,6 +16,7 @@ import {
   deletePackTC,
   getSearchPacksListTC,
   getSortPacksListTC,
+  packIdSelect,
   packsSelect,
   pageCountSelect,
   pageSelect,
@@ -26,7 +27,7 @@ import {
   updatePackNameTC,
 } from "../../../bll/reducers/packs-reducer";
 import { PATH } from "../../../components/common/routes/RoutesConstants";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { appStatusSelect } from "../../../bll/reducers/app-reducer";
 import { useDebounce } from "../../../utils/useDebounce";
 import { userIDSelector } from "../../../bll/reducers/auth-reducer";
@@ -36,6 +37,7 @@ import style from "./PacksTable.module.css";
 import { DeleteModal } from "../../../components/modal/DeleteModal";
 import { AddNewPackModal } from "../../../components/modal/AddNewPackModal";
 import { EditTitleModal } from "../../../components/modal/EditTitleModal";
+import { Link } from "react-router-dom";
 
 interface Data {
   id: string;
@@ -144,6 +146,7 @@ export const PacksTable: React.FC = () => {
   const page = useAppSelector(pageSelect);
   const rowsPerPage = useAppSelector(pageCountSelect);
   const userID = useAppSelector(userIDSelector);
+  // const packID = useAppSelector(packIdSelect);
 
   // ==== SEARCHING =====
 
@@ -282,7 +285,9 @@ export const PacksTable: React.FC = () => {
                       ) : null}
                       <IconButton
                         disabled={status === "loading"}
-                        onClick={() => navigate(PATH.CARD_LEARN)}
+                        onClick={() => {
+                          navigate(`/learn/${card._id}`);
+                        }}
                       >
                         <LocalLibraryIcon />
                       </IconButton>

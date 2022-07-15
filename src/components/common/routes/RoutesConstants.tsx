@@ -23,7 +23,7 @@ export const PATH = {
   CHECK_EMAIL: "/check-email",
   PACKS_LIST: "/packs-list",
   CARDS_LIST: "/cards-list",
-  CARD_LEARN: "/learn/:cardID",
+  CARD_LEARN: "/learn/:packID",
 };
 
 export const RoutesConstants: React.FC = () => {
@@ -45,7 +45,7 @@ export const RoutesConstants: React.FC = () => {
         <Route path={PATH.CHECK_EMAIL} element={<CheckEmail />} />
         <Route path={PATH.PACKS_LIST} element={<PacksTableContainer />} />
         <Route path={PATH.CARDS_LIST} element={<CardsTable />} />
-        <Route path={PATH.CARD_LEARN} element={<CardLearn />} />
+        <Route path="learn/:id" element={<CardLearn />} />
       </Routes>
     </div>
   );

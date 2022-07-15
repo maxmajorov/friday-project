@@ -13,6 +13,7 @@ import {
   getCardsListTC,
   setCardGradeTC,
 } from "../../bll/reducers/cards-reducer";
+import { packIdSelect } from "../../bll/reducers/packs-reducer";
 
 const grades = [
   "Don't know",
@@ -50,7 +51,10 @@ export const CardLearn: React.FC = () => {
   const navigate = useNavigate();
   const { id } = useParams();
 
+  console.log(id);
+
   const dispatch = useAppDispatch();
+  const packID = useAppSelector(packIdSelect);
   const cards = useAppSelector(cardsSelect);
   const page = useAppSelector(cardsPageSelect);
   const pageCount = useAppSelector(cardsPageCountSelect);
@@ -84,7 +88,7 @@ export const CardLearn: React.FC = () => {
     console.log("LearnContainer useEffect");
 
     if (first) {
-      // dispatch(getCardsListTC(page, pageCount, id));
+      dispatch(getCardsListTC(page, pageCount, id ? id : ""));
       setFirst(false);
     }
 
@@ -99,7 +103,7 @@ export const CardLearn: React.FC = () => {
     setShow(false);
 
     if (cards.length > 0) {
-      // dispatch(setCardGradeTC(cardID, checkGrade));
+      dispatch(setCardGradeTC(card._id, checkGrade));
       setCard(getCard(cards));
     } else {
     }
@@ -130,14 +134,13 @@ export const CardLearn: React.FC = () => {
               {card.answer}
             </div>
             <div className={style.grades}>
-              {grades.map((g, i) => (
-                <div style={{ textAlign: "left" }}>
+              {grades.map((grade, ind) => (
+                <div key={ind} style={{ textAlign: "left" }}>
                   <Checkbox
-                    key={i}
-                    checked={i + 1 === checkGrade}
-                    onClick={() => setCheckGrade(i + 1)}
+                    checked={ind + 1 === checkGrade}
+                    onClick={() => setCheckGrade(ind + 1)}
                   />
-                  {g}
+                  {grade}
                 </div>
               ))}
             </div>
@@ -147,7 +150,7 @@ export const CardLearn: React.FC = () => {
           <Button
             variant={"contained"}
             color={"primary"}
-            onClick={() => navigate(PATH.PACKS_LIST)}
+            onClick={() => navigate(-1)}
           >
             Cancel
           </Button>
