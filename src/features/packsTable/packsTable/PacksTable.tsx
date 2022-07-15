@@ -16,7 +16,6 @@ import {
   deletePackTC,
   getSearchPacksListTC,
   getSortPacksListTC,
-  packIdSelect,
   packsSelect,
   pageCountSelect,
   pageSelect,
@@ -27,7 +26,7 @@ import {
   updatePackNameTC,
 } from "../../../bll/reducers/packs-reducer";
 import { PATH } from "../../../components/common/routes/RoutesConstants";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { appStatusSelect } from "../../../bll/reducers/app-reducer";
 import { useDebounce } from "../../../utils/useDebounce";
 import { userIDSelector } from "../../../bll/reducers/auth-reducer";
@@ -37,7 +36,6 @@ import style from "./PacksTable.module.css";
 import { DeleteModal } from "../../../components/modal/DeleteModal";
 import { AddNewPackModal } from "../../../components/modal/AddNewPackModal";
 import { EditTitleModal } from "../../../components/modal/EditTitleModal";
-import { Link } from "react-router-dom";
 
 interface Data {
   id: string;
@@ -266,23 +264,6 @@ export const PacksTable: React.FC = () => {
                       {card.user_name}
                     </TableCell>
                     <TableCell align="right" style={{ display: "flex" }}>
-                      {userID === card.user_id ? (
-                        <>
-                          <DeleteModal
-                            title={"Delete pack"}
-                            name={card.name}
-                            packID={card._id}
-                            action={"Delete"}
-                            deleteItem={deletePackHandler}
-                          />
-                          <EditTitleModal
-                            name={card.name}
-                            packID={card._id}
-                            action={"Edit"}
-                            updateItem={updatePackHandler}
-                          />
-                        </>
-                      ) : null}
                       <IconButton
                         disabled={status === "loading"}
                         onClick={() => {
@@ -291,6 +272,23 @@ export const PacksTable: React.FC = () => {
                       >
                         <LocalLibraryIcon />
                       </IconButton>
+                      {userID === card.user_id ? (
+                        <>
+                          <EditTitleModal
+                            name={card.name}
+                            packID={card._id}
+                            action={"Edit"}
+                            updateItem={updatePackHandler}
+                          />
+                          <DeleteModal
+                            title={"Delete pack"}
+                            name={card.name}
+                            packID={card._id}
+                            action={"Delete"}
+                            deleteItem={deletePackHandler}
+                          />
+                        </>
+                      ) : null}
                     </TableCell>
                   </TableRow>
                 );

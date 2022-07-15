@@ -11,7 +11,6 @@ import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import ArrowBackOutlinedIcon from "@mui/icons-material/ArrowBackOutlined";
 import Button from "@mui/material/Button";
-import GradeOutlinedIcon from "@mui/icons-material/GradeOutlined";
 import { Link, Navigate } from "react-router-dom";
 import { PATH } from "../../components/common/routes/RoutesConstants";
 import { useAppDispatch, useAppSelector } from "../../bll/store";
@@ -309,7 +308,9 @@ export const CardsTable = () => {
                               updateItem={updateCardHandler}
                             />
                           </>
-                        ) : null}
+                        ) : (
+                          <div style={{ padding: "3px 0" }}>not available</div>
+                        )}
                       </TableCell>
                     </TableRow>
                   );

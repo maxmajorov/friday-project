@@ -2,8 +2,7 @@ import React, { useEffect, useState } from "react";
 import style from "./CardLearn.module.css";
 import commonStyle from "../../assets/styles/Common.module.css";
 import { Button, Checkbox } from "@mui/material";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
-import { PATH } from "../../components/common/routes/RoutesConstants";
+import { useNavigate, useParams } from "react-router-dom";
 import { CardType } from "../../api/cards-api";
 import { useAppDispatch, useAppSelector } from "../../bll/store";
 import {
@@ -13,7 +12,6 @@ import {
   getCardsListTC,
   setCardGradeTC,
 } from "../../bll/reducers/cards-reducer";
-import { packIdSelect } from "../../bll/reducers/packs-reducer";
 
 const grades = [
   "Don't know",
@@ -54,7 +52,6 @@ export const CardLearn: React.FC = () => {
   console.log(id);
 
   const dispatch = useAppDispatch();
-  const packID = useAppSelector(packIdSelect);
   const cards = useAppSelector(cardsSelect);
   const page = useAppSelector(cardsPageSelect);
   const pageCount = useAppSelector(cardsPageCountSelect);
@@ -75,14 +72,6 @@ export const CardLearn: React.FC = () => {
     updated: "",
     __v: 0,
   });
-
-  // interface LocationType {
-  //   question: string;
-  //   answer: string;
-  // }
-
-  // const location = useLocation();
-  // let { question, answer } = location.state as LocationType;
 
   useEffect(() => {
     console.log("LearnContainer useEffect");
@@ -167,7 +156,6 @@ export const CardLearn: React.FC = () => {
               variant={"contained"}
               color={"primary"}
               onClick={onNextHandler}
-              //   disabled={disableBtn}
             >
               Next question
             </Button>

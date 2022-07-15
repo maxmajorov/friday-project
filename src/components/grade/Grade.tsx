@@ -32,11 +32,6 @@ export const Grade: React.FC<GradePropsType> = ({ value }) => {
         fontSize="small"
         color={value > 4 ? "warning" : "action"}
       />
-      {/* <Star selected={value > 0} value={1} />
-      <Star selected={value > 1} value={2} />
-      <Star selected={value > 2} value={3} />
-      <Star selected={value > 3} value={4} />
-      <Star selected={value > 4} value={5} /> */}
     </div>
   );
 };
