@@ -42,6 +42,7 @@ import { AddNewCardModal } from "../../components/modal/AddNewCardModal";
 import style from "./CardsTable.module.css";
 import { DeleteModal } from "../../components/modal/DeleteModal";
 import { EditCardModal } from "../../components/modal/EditCardModal";
+import { Grade } from "../../components/grade/Grade";
 
 interface Data {
   question: string;
@@ -288,11 +289,7 @@ export const CardsTable = () => {
                             ?.textAlign
                         }
                       >
-                        <GradeOutlinedIcon fontSize="small" />
-                        <GradeOutlinedIcon fontSize="small" />
-                        <GradeOutlinedIcon fontSize="small" />
-                        <GradeOutlinedIcon fontSize="small" />
-                        <GradeOutlinedIcon fontSize="small" />
+                        <Grade value={card.grade} />
                       </TableCell>
                       <TableCell align="center" style={{ display: "flex" }}>
                         {userID === card.user_id ? (
