@@ -61,6 +61,12 @@ export const cardsReducer = (
     case "CARDS/set-card-grade": {
       return {
         ...state,
+        ...state.cards.map((card) =>
+          card._id === action.cardID ? (card.grade = action.grade) : card
+        ),
+        ...state.cards.map((card) =>
+          card._id === action.cardID ? (card.shots = action.shots) : card
+        ),
       };
     }
 
@@ -80,8 +86,8 @@ export const setCardsPageAC = (page: number) =>
 export const setCardsPageCountAC = (pageCount: number) =>
   ({ type: "CARDS/set-cards-countPage", pageCount } as const);
 
-export const setCardGardeAC = (cardID: string, grade: number) =>
-  ({ type: "CARDS/set-card-grade", cardID, grade } as const);
+export const setCardGardeAC = (cardID: string, grade: number, shots: number) =>
+  ({ type: "CARDS/set-card-grade", cardID, grade, shots } as const);
 
 // ==== THUNKS =====
 
@@ -191,13 +197,13 @@ export const updateCardTC =
   };
 
 export const setCardGradeTC =
-  (cardID: string, grade: number): AppThunk =>
+  (cardID: string, grade: number, shots: number): AppThunk =>
   async (dispatch) => {
     try {
       dispatch(appSetStatusAC("loading"));
-      const response = await getCardsAPI.setCardsGrade(cardID, grade);
+      const response = await getCardsAPI.setCardsGrade(cardID, grade, shots);
 
-      dispatch(setCardGardeAC(cardID, grade));
+      dispatch(setCardGardeAC(cardID, grade, shots));
     } catch (e) {
       const err = e as Error | AxiosError<{ error: string }>;
       handleNetworkError(dispatch, err);

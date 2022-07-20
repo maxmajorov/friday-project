@@ -91,8 +91,10 @@ export const CardLearn: React.FC = () => {
   const onNextHandler = () => {
     setShow(false);
 
+    let finalGrade: number = (card.grade + checkGrade) / (card.shots + 1);
+
     if (cards.length > 0) {
-      dispatch(setCardGradeTC(card._id, checkGrade));
+      dispatch(setCardGradeTC(card._id, finalGrade, card.shots + 1));
       setCard(getCard(cards));
     } else {
     }

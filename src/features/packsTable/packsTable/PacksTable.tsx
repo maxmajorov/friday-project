@@ -265,7 +265,7 @@ export const PacksTable: React.FC = () => {
                     </TableCell>
                     <TableCell align="right" style={{ display: "flex" }}>
                       <IconButton
-                        disabled={status === "loading"}
+                        disabled={status === "loading" || card.cardsCount === 0}
                         onClick={() => {
                           navigate(`/learn/${card._id}`);
                         }}
