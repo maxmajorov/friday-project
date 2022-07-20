@@ -12,8 +12,13 @@ type PropsType = {
 export const AddNewPackModal: React.FC<PropsType> = ({ action, addItem }) => {
   const [value, setValue] = useState("");
   const [_private, setPrivate] = useState(false);
+  const [open, setOpen] = useState(false);
 
   const status = useAppSelector(appStatusSelect);
+
+  const onCloseHandler = () => {
+    setOpen(false);
+  };
 
   const onChangeHandler = (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -26,7 +31,12 @@ export const AddNewPackModal: React.FC<PropsType> = ({ action, addItem }) => {
   };
 
   return (
-    <UniversalModal status={status} action={action}>
+    <UniversalModal
+      status={status}
+      action={action}
+      open={open}
+      setOpen={setOpen}
+    >
       <div>
         <h3>Add new pack</h3>
         <hr />
@@ -41,13 +51,18 @@ export const AddNewPackModal: React.FC<PropsType> = ({ action, addItem }) => {
           <Checkbox checked={_private} onChange={checkedHandler} /> Private pack
         </div>
         <div>
-          <Button variant="contained" style={{ marginRight: "10px" }}>
+          <Button
+            variant="contained"
+            style={{ marginRight: "10px" }}
+            onClick={onCloseHandler}
+          >
             cancel
           </Button>
           <Button
             variant="contained"
             onClick={() => {
               addItem(value, _private);
+              setOpen(true);
             }}
             disabled={!value}
           >

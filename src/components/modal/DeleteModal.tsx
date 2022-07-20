@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Button } from "@mui/material";
 import { UniversalModal } from "./Modal";
 import { useAppSelector } from "../../bll/store";
@@ -20,9 +20,19 @@ export const DeleteModal: React.FC<PropsType> = ({
   deleteItem,
 }) => {
   const status = useAppSelector(appStatusSelect);
+  const [open, setOpen] = useState(false);
+
+  const onCloseHandler = () => {
+    setOpen(false);
+  };
 
   return (
-    <UniversalModal status={status} action={action}>
+    <UniversalModal
+      status={status}
+      action={action}
+      open={open}
+      setOpen={setOpen}
+    >
       <div>
         <h3>{title}</h3>
         <hr />
@@ -38,13 +48,20 @@ export const DeleteModal: React.FC<PropsType> = ({
         )}
 
         <div>
-          <Button variant="contained" style={{ marginRight: "10px" }}>
+          <Button
+            variant="contained"
+            style={{ marginRight: "10px" }}
+            onClick={onCloseHandler}
+          >
             cancel
           </Button>
           <Button
             variant="contained"
             color={"error"}
-            onClick={() => deleteItem(packID)}
+            onClick={() => {
+              deleteItem(packID);
+              setOpen(true);
+            }}
           >
             delete
           </Button>

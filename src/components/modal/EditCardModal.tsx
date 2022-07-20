@@ -21,8 +21,13 @@ export const EditCardModal: React.FC<PropsType> = ({
 }) => {
   const [newQuestion, setNewQuestion] = useState(question);
   const [newAnswer, setNewAnswer] = useState(answer);
+  const [open, setOpen] = useState(false);
 
   const status = useAppSelector(appStatusSelect);
+
+  const onCloseHandler = () => {
+    setOpen(false);
+  };
 
   const onChangeQuestionHandler = (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -37,7 +42,12 @@ export const EditCardModal: React.FC<PropsType> = ({
   };
 
   return (
-    <UniversalModal status={status} action={action}>
+    <UniversalModal
+      status={status}
+      action={action}
+      open={open}
+      setOpen={setOpen}
+    >
       <div>
         <h3>Edit pack's title</h3>
         <hr />
@@ -56,13 +66,18 @@ export const EditCardModal: React.FC<PropsType> = ({
           style={{ margin: "20px 0" }}
         />
         <div>
-          <Button variant="contained" style={{ marginRight: "10px" }}>
+          <Button
+            variant="contained"
+            style={{ marginRight: "10px" }}
+            onClick={onCloseHandler}
+          >
             cancel
           </Button>
           <Button
             variant="contained"
             onClick={() => {
               updateItem(cardID, newQuestion, newAnswer);
+              setOpen(true);
             }}
             disabled={!newQuestion || !newAnswer}
           >

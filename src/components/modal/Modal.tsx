@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import Box from "@mui/material/Box";
 import Modal from "@mui/material/Modal";
 import { IconButton, Tooltip } from "@mui/material";
@@ -21,18 +21,21 @@ const style = {
 type PropsType = {
   action: string;
   status: string;
+  open: boolean;
+  setOpen: (value: boolean) => void;
   children: React.ReactNode;
 };
 
 export const UniversalModal: React.FC<PropsType> = ({
   action,
   status,
+  open,
+  setOpen,
   children,
 }) => {
-  const [open, setOpen] = useState(false);
-  const handleOpen = () => setOpen(true);
+  const handleOpen = () => setOpen && setOpen(true);
   const handleClose = () => {
-    setOpen(false);
+    setOpen && setOpen(false);
   };
 
   return (
@@ -52,7 +55,7 @@ export const UniversalModal: React.FC<PropsType> = ({
       </Tooltip>
 
       <Modal
-        open={open}
+        open={open ? open : false}
         onClose={handleClose}
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"

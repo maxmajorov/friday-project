@@ -19,10 +19,13 @@ export const EditTitleModal: React.FC<PropsType> = ({
   updateItem,
 }) => {
   const [value, setValue] = useState(name);
-
-  // const navigate = useNavigate();
+  const [open, setOpen] = useState(false);
 
   const status = useAppSelector(appStatusSelect);
+
+  const onCloseHandler = () => {
+    setOpen(false);
+  };
 
   const onChangeHandler = (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -31,7 +34,12 @@ export const EditTitleModal: React.FC<PropsType> = ({
   };
 
   return (
-    <UniversalModal status={status} action={action}>
+    <UniversalModal
+      status={status}
+      action={action}
+      open={open}
+      setOpen={setOpen}
+    >
       <div>
         <h3>Edit pack's title</h3>
         <hr />
@@ -46,7 +54,7 @@ export const EditTitleModal: React.FC<PropsType> = ({
           <Button
             variant="contained"
             style={{ marginRight: "10px" }}
-            // onClick={() => navigate(-1)}
+            onClick={onCloseHandler}
           >
             cancel
           </Button>
@@ -54,6 +62,7 @@ export const EditTitleModal: React.FC<PropsType> = ({
             variant="contained"
             onClick={() => {
               updateItem(packID, value);
+              setOpen(true);
             }}
             disabled={!value}
           >

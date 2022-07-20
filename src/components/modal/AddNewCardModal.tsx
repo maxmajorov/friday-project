@@ -12,8 +12,13 @@ type PropsType = {
 export const AddNewCardModal: React.FC<PropsType> = ({ action, addItem }) => {
   const [question, setQuestion] = useState("");
   const [answer, setAnswer] = useState("");
+  const [open, setOpen] = useState(false);
 
   const status = useAppSelector(appStatusSelect);
+
+  const onCloseHandler = () => {
+    setOpen(false);
+  };
 
   const onChangeQuestionHandler = (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -28,7 +33,12 @@ export const AddNewCardModal: React.FC<PropsType> = ({ action, addItem }) => {
   };
 
   return (
-    <UniversalModal status={status} action={action}>
+    <UniversalModal
+      status={status}
+      action={action}
+      open={open}
+      setOpen={setOpen}
+    >
       <div>
         <h3>Add new card</h3>
         <hr />
@@ -48,13 +58,18 @@ export const AddNewCardModal: React.FC<PropsType> = ({ action, addItem }) => {
         />
 
         <div>
-          <Button variant="contained" style={{ marginRight: "10px" }}>
+          <Button
+            variant="contained"
+            style={{ marginRight: "10px" }}
+            onClick={onCloseHandler}
+          >
             cancel
           </Button>
           <Button
             variant="contained"
             onClick={() => {
               addItem(question, answer);
+              setOpen(true);
             }}
             disabled={!question || !answer}
           >
