@@ -12,6 +12,7 @@ import {
   getCardsListTC,
   setCardGradeTC,
 } from "../../bll/reducers/cards-reducer";
+import { appStatusSelect } from "../../bll/reducers/app-reducer";
 
 const grades = [
   "Don't know",
@@ -49,12 +50,11 @@ export const CardLearn: React.FC = () => {
   const navigate = useNavigate();
   const { id } = useParams();
 
-  console.log(id);
-
   const dispatch = useAppDispatch();
   const cards = useAppSelector(cardsSelect);
   const page = useAppSelector(cardsPageSelect);
   const pageCount = useAppSelector(cardsPageCountSelect);
+  const status = useAppSelector(appStatusSelect);
 
   const [card, setCard] = useState<CardType>({
     _id: "fake",
@@ -142,6 +142,7 @@ export const CardLearn: React.FC = () => {
             variant={"contained"}
             color={"primary"}
             onClick={() => navigate(-1)}
+            disabled={status === "loading"}
           >
             Cancel
           </Button>
@@ -150,6 +151,7 @@ export const CardLearn: React.FC = () => {
               variant={"contained"}
               color={"primary"}
               onClick={showHandler}
+              disabled={status === "loading"}
             >
               Show answer
             </Button>
@@ -158,6 +160,7 @@ export const CardLearn: React.FC = () => {
               variant={"contained"}
               color={"primary"}
               onClick={onNextHandler}
+              disabled={status === "loading"}
             >
               Next question
             </Button>

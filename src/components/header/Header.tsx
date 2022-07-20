@@ -9,21 +9,13 @@ export const Header: React.FC = () => {
   return (
     <header className={style.header}>
       <div className={style.container}>
-        <h1 className={style.title}>Training cards</h1>
         <nav className={style.nav_list}>
-          {/* //изменить на packs */}
-
           <NavLink
             to={PATH.PACKS_LIST}
             className={({ isActive }) =>
               style.link + " " + (isActive ? style.active : "")
             }
           >
-            {/* <div
-            style={{
-              backgroundColor: `url(${cardsIcon})}`,
-            }}
-          /> */}
             <img src={cardsIcon} className={style.icon} alt="card-icon" />
             Packs list
           </NavLink>
@@ -37,10 +29,6 @@ export const Header: React.FC = () => {
             <img src={profileIcon} className={style.icon} alt="card-icon" />
             Profile
           </NavLink>
-
-          {/*    <NavLink to={PATH.LOGIN}>Login</NavLink> 
-        <NavLink to={PATH.PASSWORD_RECOVERING}>Password_recovering</NavLink>
-        <NavLink to={PATH.NEW_PASSWORD}>New_password</NavLink> */}
         </nav>
       </div>
     </header>

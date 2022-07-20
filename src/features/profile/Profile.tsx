@@ -59,22 +59,24 @@ export const Profile = () => {
     <>
       {status === "loading" && <LinearProgress />}
       <div className={classes.container}>
-        <div className={classes.userAvatar} style={finalAva} />
-        <label htmlFor="icon-button-file">
-          <Input
-            accept="image/*"
-            id="icon-button-file"
-            type="file"
-            onChange={encodeImageFileAsURL}
-          />
-          <IconButton
-            color="primary"
-            aria-label="upload picture"
-            component="span"
-          >
-            <PhotoCamera />
-          </IconButton>
-        </label>
+        <div className={classes.userAvatar} style={finalAva}>
+          <label htmlFor="icon-button-file" className={classes.uploadIcon}>
+            <Input
+              accept="image/*"
+              id="icon-button-file"
+              type="file"
+              onChange={encodeImageFileAsURL}
+            />
+            <IconButton
+              color="primary"
+              size={"large"}
+              aria-label="upload picture"
+              component="span"
+            >
+              <PhotoCamera />
+            </IconButton>
+          </label>
+        </div>
 
         <LogoutIcon onClick={logoutHandler} className={classes.logoutBtn} />
 

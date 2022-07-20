@@ -128,7 +128,7 @@ const EnhancedTableHead: React.FC = () => {
   };
 
   return (
-    <TableHead style={{ backgroundColor: "rgba(0, 0, 0, 0.226)" }}>
+    <TableHead style={{ backgroundColor: "var(--bg-color-second)" }}>
       <TableRow>
         {headCells.map((headCell) => (
           <TableCell

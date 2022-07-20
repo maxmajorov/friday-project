@@ -12,13 +12,12 @@
 
 .leftSide {
     padding: 0 25px;
-    background-color: rgba(0, 0, 0, 0.226);
+    background-color: var(--bg-color-first);
 }
 
 .leftTitle {
     font-size: 16px;
-    line-height:33px;   
-    color: #2D2E46;
+    line-height:33px;  
 }
 
 .rightSide {
@@ -28,8 +27,7 @@
 .rightTitle {
     font-weight: 600;
     font-size: 22px;
-    line-height: 33px;
-    color: #2D2E46;
+    line-height: 33px;   
 }
 
 .slider {
